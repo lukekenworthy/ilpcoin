@@ -1,39 +1,26 @@
 #!usr/bin/env python3
 
-from flask import Flask
 from blockchain import *
+import requests
 
-app = Flask(__name__)
+class ClientPeer:
 
-class ServerPeer:
+    def __init__(self, neighbors: list= [], host="localhost", port="8000"):
+        self.neighbors: list = neighbors
+        self.host = host
+        self.port = port
 
-    def __init__(self, id, block_size):
-        self.id: int = id
-        self.block_size: int = block_size
-        self.transactions = []
-        self.blockchain = []
+    def broadcast_transaction(self, Transaction):
+        payload = Transaction.serialize()
+        for neighbor in self.neighbors:
+            url = self.host + ":" + neighbor + "/send_transaction"
+            requests.post(url, data=payload)
     
-    @app.route('/send_block', methods=['POST'])
-    def get_block():
-        try:
-            block = request.form['block']
-            # idk deserialize and validate the block
-            print(block)
-        except:
-            print("Bad Request, no block found")
-    
-    @app.route('/send_transaction', methods=['POST'])
-    def get_transaction():
-        try:
-            transaction = request.form['transaction']
-            print(transaction)
-        except:
-            print("Bad Request, no transaction found")
+    def broadcast_block(self, Block):
+        payload = Block.serialize()
+        for neighbor in self.neighbors:
+            url = self.host + ":" + neighbor + "/send_block"
+            requests.post(url, data=payload)
 
 
 
-
-
-
-
-    

@@ -1,0 +1,1 @@
+# giant while true loop that does all node operations - check for ILP solution, validate blocks, validate transactions, etc

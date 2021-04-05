@@ -30,28 +30,32 @@ class Block:
             self.ILP_solution:str = raw_block['ILP_solution']
 
             raw_transactions: str = raw_block["transactions"]
-            self.transactions = [el.deserialize for el in raw_transactions]
+            self.transactions = [Transaction().deserialize(el) for el in raw_transactions]
         except:
             raise BadBlockError
 
-    # leaving this to you luke, i guess this involves some hashing magic
-    def validate_block(self):
-        pass
-
+    # leaving this to you luke, i guess this involves some hashing stuff
+    def validate_block(self) -> bool:
+        return True
 
 class Transaction:
 
-    def __init__(self, transaction: dict): 
+    def __init__(self, transaction: dict = None): 
         self.transaction = transaction
-        self.validate()
+        if transaction:
+            self.validate()
 
-    def validate(self) -> None: 
+    def validate(self) -> None:
         if ("sender" not in self.transaction or "reciever" not in self.transaction 
         or "amount" not in self.transaction):
             raise BadTransactionError
     
     def serialize(self) -> str:
         return json.dumps(self.transaction)
+    
+    def deserialize(self, data: str):
+        self.transactions = json.loads(data)
+        self.validate()
 
     
 
