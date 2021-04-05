@@ -13,14 +13,22 @@ class ServerPeer:
         self.transactions = []
         self.blockchain = []
     
-    @app.route('/send_block', methods=['POST')
+    @app.route('/send_block', methods=['POST'])
     def get_block():
         try:
-            request.form['block']
+            block = request.form['block']
+            # idk deserialize and validate the block
+            print(block)
+        except:
+            print("Bad Request, no block found")
     
     @app.route('/send_transaction', methods=['POST'])
     def get_transaction():
-        pass
+        try:
+            transaction = request.form['transaction']
+            print(transaction)
+        except:
+            print("Bad Request, no transaction found")
 
 
 
