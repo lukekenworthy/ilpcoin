@@ -4,11 +4,12 @@ import mip
 import pickle
 import tempfile
 
+MAX_TIME = 300
+
 class IlpSolution:
-    def __init__(self, ilp_id, solved_ilp):
-        # ensure it is solved
-        # extract the vars unto a list
-        self.mip_soln = mip_soln
+    def __init__(self, ilp_uid, solved_ilp):
+        self.ilp_id = ilp_uid
+        self.results = [(v.name, v.x) for v in solved_ilp.vars]
 
     @staticmethod
     def deserialize(self, raw_bytes) -> IlpSolution:
@@ -18,18 +19,24 @@ class IlpSolution:
         return picke.dumps(self)
 
     def print_soln(self):
+        # ToDo
         pass
 
 class Ilp:
 
     class SerializableIlp:
         def __init__(self, full_ilp):
-            # set up the dumping and stuff in a nicely pickelable way dealing with files
-            pass
+            with  tempfile.NamedTemporaryFile(suffix=".lp") as tempOutputFile:
+                full_ilp.mip_ilp.write(tempOutputFile.name)
+                self.serialized_ilp = tempOutputFile.read()
+                self.uid = full_ilp.uid
 
         def to_full_ilp(self) -> Ilp:
-            # restore here
-            pass
+            with  tempfile.NamedTemporaryFile(suffix=".lp") as tempOutputFile:
+                tempOutputFile.write(self.serialized_ilp)
+                deserialized_ilp = mip.Model()
+                deserialized_ilp.read(tempOutputFile.name)
+                return Ilp(self.uid, deserialized_ilp)
 
     def __init__(self, uid, mip_ilp):
         self.mip_ilp = mip_ilp
@@ -39,7 +46,11 @@ class Ilp:
         return self.uid
 
     def solve(self) -> IlpSolution:
-        pass
+        status = self.mip_ilp.optimize(max_seconds = MAX_TIME)
+        if status == OptimizationStatus.INFEASIBLE || status == OptimizationStatus.OPTIMAL:
+            return IlpSolution(self.uid, self)
+        else:
+            return None
 
     def serialize(self) -> bytes:
         return pickle.dumps(SerializableIlp(self))
