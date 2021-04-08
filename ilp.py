@@ -7,7 +7,7 @@ import tempfile
 MAX_TIME = 300
 
 class IlpSolution:
-    def __init__(self, solved_ilp):
+    def __init__(self, solved_ilp : 'Ilp'):
         self.ilp_id = solved_ilp.uid
         self.variable_results = [(v.name, v.x) for v in solved_ilp.mip_ilp.vars]
 
@@ -27,7 +27,7 @@ class Ilp:
     # Contains the subset of the state from the more complex Ilp class that we want to serialize and send around
     class SerializableIlp:
         # create these from full-blown Ilp objects
-        def __init__(self, full_ilp, k):
+        def __init__(self, full_ilp : 'Ilp', k : int):
             # we need temp files to use mip's built in serialization; this is an ugly hack
             with  tempfile.NamedTemporaryFile(suffix=".lp") as tempOutputFile:
                 full_ilp.mip_ilp.write(tempOutputFile.name)
@@ -37,7 +37,7 @@ class Ilp:
 
         # convert back to a full ilp.
         # any solution progress will be lost.
-        def to_full_ilp(self):
+        def to_full_ilp(self) -> 'Ilp':
             with  tempfile.NamedTemporaryFile(suffix=".lp") as tempOutputFile:
                 tempOutputFile.write(self.serialized_ilp)
                 deserialized_ilp = mip.Model()
@@ -50,7 +50,7 @@ class Ilp:
         self.uid = uid
         self.k = k
 
-    def setId(self, uid: int):
+    def setId(self, uid: int) -> None:
         self.uid = uid
 
     def getId(self) -> int:
@@ -70,7 +70,7 @@ class Ilp:
 
     # from bytes
     @classmethod
-    def deserialize(cls, raw_bytes : bytes):
+    def deserialize(cls, raw_bytes : bytes) -> 'Ilp':
         return pickle.loads(raw_bytes).to_full_ilp()
 
     def __eval_objective_function(solution):
@@ -82,7 +82,7 @@ class Ilp:
 
         return res
 
-    def check(self, solution : IlpSolution):
+    def check(self, solution : IlpSolution) -> bool:
         solution_value = __eval_objective_function(solution)
         return solution_value < k
 
