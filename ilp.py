@@ -11,8 +11,8 @@ class IlpSolution:
         self.ilp_id = solved_ilp.uid
         self.results = [(v.name, v.x) for v in solved_ilp.mip_ilp.vars]
 
-    @staticmethod
-    def deserialize(self, raw_bytes : bytes) -> IlpSolution:
+    @classmethod
+    def deserialize(cls, raw_bytes : bytes):
         return pickle.loads(raw_bytes)
 
     def serialize(self) -> bytes:
@@ -33,10 +33,10 @@ class Ilp:
                 full_ilp.mip_ilp.write(tempOutputFile.name)
                 self.serialized_ilp = tempOutputFile.read()
                 self.uid = full_ilp.uid
-        
-        # convert back to a full ilp. 
-        # any solution progress will be lost.  
-        def to_full_ilp(self) -> Ilp:
+
+        # convert back to a full ilp.
+        # any solution progress will be lost.
+        def to_full_ilp(self):
             with  tempfile.NamedTemporaryFile(suffix=".lp") as tempOutputFile:
                 tempOutputFile.write(self.serialized_ilp)
                 deserialized_ilp = mip.Model()
@@ -48,17 +48,17 @@ class Ilp:
         self.mip_ilp = mip_ilp
         self.uid = uid
 
-    def setId(self, uid: int): 
+    def setId(self, uid: int):
         self.uid = uid
 
     def getId(self) -> int:
         return self.uid
 
-    # try to solve for up to MAX_TIME and return a solution class 
+    # try to solve for up to MAX_TIME and return a solution class
     def solve(self) -> IlpSolution:
         status = self.mip_ilp.optimize(max_seconds = MAX_TIME)
-        if status == OptimizationStatus.INFEASIBLE || status == OptimizationStatus.OPTIMAL:
-            return IlpSolution(self.uid, self.)
+        if (status == OptimizationStatus.INFEASIBLE or status == OptimizationStatus.OPTIMAL):
+            return IlpSolution(self)
         else:
             return None
 
