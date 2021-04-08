@@ -12,7 +12,7 @@ PORT:int = 8000
 
 class Verifier(Server):
 
-    def __init__(self, id:int, blocksize:int = 5, reward:int = 6, host: str=HOST, port: int=PORT, testing=False):
+    def __init__(self, id:int, reward:int = 6, host: str=HOST, port: int=PORT, testing=False):
 
         # hardcoded for now - eventually we will ask the queue for these
         self.neighbors = [1, 2, 3].remove(id)
@@ -21,11 +21,18 @@ class Verifier(Server):
         self.start()
         self.reward = reward
 
+        # set of verified transactions waiting to be added to a block
+        self.transactions = None
+
     # get blockchain from neighbors when starting up
     def get_blockchain(self) -> Blockchain:
         n: int = random.choice(self.neighbors)
         r = requests.get(HOST + ":" + str(PORT + n) + "/get_blockchain")
         return Blockchain().deserialize(r.content)
+    
+    # do we have enough transactions to make a new block
+    def block_ready(self):
+        return len(self.transactions > self.blocksize)
     
     # main loop that runs the verifier
     def run(self) -> None:
@@ -83,11 +90,7 @@ if __name__ == '__main__':
     
 
 # TODO
-# make a module UGH
-# test serialization for 
-    # block
-    # transaction
-    # blockchain
+# test other random blockchain methods
 # test with fake blocks for verifier
 # test verifier communication
 # test transaction, POW, blockchain validation
