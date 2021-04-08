@@ -24,40 +24,42 @@ class IlpQueue:
         self.last_used_uid = 0
 
     @classmethod
-    def resume_from_database(cls):
+    def resume_from_database(cls) -> 'IlpQueue':
         #ToDo
         return cls()
 
-    def add(self, ilp):
+    def add(self, ilp : Ilp) -> int:
         last_used_uid += 1
         ilp.setId(last_used_uid)
         self.q.put(ilp)
+        return ilp.getId()
 
-    def get_top(self):
+    def get_top(self) -> Ilp:
         return self.top
 
-    def lookup_ilp(self, id):
+    def lookup_ilp(self, id : int) -> Ilp:
         # do we want to query a verifier here?
         try:
             return ilp_history[id]
         except:
             return None
 
-    def lookup_solution(self, id):
+    def lookup_solution(self, id : int)  -> IlpSolutionp:
         # do we want to query a verifier here?
+        # how do we get these, anyway?
         try:
             return soln_history[id]
         except:
             return None
 
-    def __complete_item(self):
+    def __complete_item(self) -> None:
         if not q.empty():
             self.top = self.q.get()
         else:
             self.top = None
         self.count = 0
 
-    def incr_count(self, uid):
+    def incr_count(self, uid : int) -> bool:
         if not self.get_top():
             return False
 
