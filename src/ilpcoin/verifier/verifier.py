@@ -1,9 +1,8 @@
 #!usr/bin/env python3
 
-from server import Server
+from ilpcoin.verifier.server import Server
 from time import sleep
-from ilpcoin.blockchain import *
-import argparse
+from ilpcoin.common.blockchain import *
 import random
 import requests
 
@@ -29,11 +28,11 @@ class Verifier(Server):
         n: int = random.choice(self.neighbors)
         r = requests.get(HOST + ":" + str(PORT + n) + "/get_blockchain")
         return Blockchain().deserialize(r.content)
-    
+
     # do we have enough transactions to make a new block
     def block_ready(self):
         return len(self.transactions > self.blocksize)
-    
+
     # main loop that runs the verifier
     def run(self) -> None:
         while True:
@@ -48,7 +47,7 @@ class Verifier(Server):
                 valid = potential_block.transactions[0].amount < self.reward
                 for t in potential_block.transactions[1:]:
                     valid &= blockchain.verify_transaction(t)
-                
+
                 # validate proof of work
                 valid &= potential_block.validate_POW(blockchain.get_top())
 
@@ -59,7 +58,7 @@ class Verifier(Server):
                 else:
                     print('BAD BLOCK')
                 self.new_block -= 1
-            
+
             # found a new transaction
             if (self.new_transaction):
                 pass
@@ -69,25 +68,10 @@ class Verifier(Server):
                     self.server.blockchain.add_transaction(potential_transaction)
                     self.server.transactions_to_verify.remove(potential_transaction)
                 self.server.new_transaction = False'''
-            
-
 
             sleep(1)
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-id", help="Node Id", type=int, default=0)
-    parser.add_argument("-t", help=("Optional testing flag"), default=False)
-    parser.add_argument("-host", help="Server hostname", type=str, default='localhost')
-    parser.add_argument("-port", help="Server port number", type=int, default='8000')
-    
-    HOST = args.host
-    PORT = int(args.port)
 
-    args = parser.parse_args()
-    verifier = Verifier(id)
-    verifier.run()
-    
 
 # TODO
 # test other random blockchain methods
