@@ -3,7 +3,6 @@
 from ilpcoin.verifier.server import Server
 from time import sleep
 from ilpcoin.common.blockchain import *
-import argparse
 import random
 import requests
 
@@ -70,23 +69,8 @@ class Verifier(Server):
                     self.server.transactions_to_verify.remove(potential_transaction)
                 self.server.new_transaction = False'''
 
-
-
             sleep(1)
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-id", help="Node Id", type=int, default=0)
-    parser.add_argument("-t", help=("Optional testing flag"), default=False)
-    parser.add_argument("-host", help="Server hostname", type=str, default='localhost')
-    parser.add_argument("-port", help="Server port number", type=int, default='8000')
-
-    HOST = args.host
-    PORT = int(args.port)
-
-    args = parser.parse_args()
-    verifier = Verifier(id)
-    verifier.run()
 
 
 # TODO
