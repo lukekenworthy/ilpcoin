@@ -1,12 +1,10 @@
 from flask import Flask
-from ilp import *
+from ilpcoin.common.ilp import *
 import queue
 import threading
 
 # how many verifiers required to pop the top of the queue
 VERIFIERS_REQUIRED = 3
-
-
 
 # ToDo: All the database stuff
 # ToDo: The "DNS" service that can find neighbors
@@ -108,9 +106,6 @@ def verify_ilp(uid):
 def get_neighbors(n):
     pass
     # todo
-
-if __name__ == "__main__": 
-    app.run()
 
 
 # @param VERIFIERS_REQUIRED
