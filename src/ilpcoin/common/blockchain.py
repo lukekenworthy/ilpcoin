@@ -1,6 +1,7 @@
 #!usr/bin/env python3
 
 import json
+import hashlib
 
 class BadTransactionError(Exception):
     pass
@@ -19,10 +20,15 @@ class Transaction:
         check &= self.amount == other.amount
         return check
     
+    def hash(self) -> bytes:
+        to_hash = bytes(self.sender+self.receiver+self.amount, 'utf-8')
+        return hashlib.sha256(to_hash).hexdigest()
+    
     def initialize(self, sender:str, receiver: str, amount: int):
         self.sender = sender
         self.receiver = receiver
         self.amount = amount
+        return self 
     
     def serialize(self) -> str:
         return json.dumps({'sender': self.sender, 'receiver': self.receiver, 'amount': self.amount})
@@ -38,13 +44,13 @@ class Block:
     Encapsulates all information about a block in the chain
     '''
     
-    def __init__(self, transactions: list=[], prev_hash: int=None, nonce:int = 0):
+    def __init__(self, transactions: list=[], prev_hash: str='', nonce:int = 0):
         self.transactions: list = transactions
         self.prev_hash: int = prev_hash
 
         # waiting on jordan for exact rep, just leaving these guys as strings for now
-        self.ILP: str = None
-        self.ILP_solution: str = None
+        self.ILP: str = ''
+        self.ILP_solution: str = ''
 
         self.nonce: int = nonce
     
@@ -77,14 +83,17 @@ class Block:
         except:
             raise BadBlockError
     
-    def __hash__(self):
-        return hash((self.ILP_solution, self.nonce, [hash(t) for t in self.transactions], self.prev_hash))
+    def hash(self) -> bytes:
+        to_hash = bytes(self.ILP_solution + self.ILP + str(self.nonce) + self.prev_hash, 'utf-8')
+        for t in self.transactions:
+            to_hash += t.hash()
+        return hashlib.sha256(to_hash).hexdigest()
 
     # both miners and verifiers should use this method to validate blocks
     def validate_POW(self, previous, hardness: int) -> bool:
 
         # check that the previous_hash is correct
-        check = hash(previous) == self.prev_hash
+        check = previous.hash() == self.prev_hash 
 
         # check the ILP solution
 
@@ -93,11 +102,14 @@ class Block:
         # check that the hash puzzle was solved
         check &= self.validate_nonce(hardness)
 
-        return True
+        return check
     
     # both miners and verifiers should use this method to validate a nonce
     def validate_nonce(self, hardness: int) -> bool:
-        return str(hash(self))[0:hardness] == ("").join(['0' for i in range(0, hardness)])
+        try:
+            return int(self.hash()[len(self.hash()) - hardness:]) == 0
+        except:
+            return False
 
 class Blockchain:
 
@@ -108,7 +120,6 @@ class Blockchain:
     def __eq__(self, other):
         check = True
         for (b1, b2) in zip(self.blockchain, other.blockchain):
-            print(b1, b2)
             check &= b1 == b2
         return check
     
@@ -127,16 +138,22 @@ class Blockchain:
         self.blockchain.append(block)
     
     # everyone should use this method to verify that a transaction does not double spnd
-    def verify_transaction(self, transaction: Transaction) -> bool:
+    def verify_transaction(self, transaction: Transaction, block_index: int, trans_index: int) -> bool:
         amount = 0
 
         # pool up all the money owned by this sender
-        for block in self.blockchain:
-            for t in block.transactions:
-                if (t.sender == transaction.sender):
+        for block in self.blockchain[:block_index]:
+
+            # handle transaction fee
+            if transaction.sender == block.transactions[0].sender:
+                amount += block.transactions[0].amount
+
+            for t in block.transactions[1:trans_index]:
+                if t.sender == transaction.sender:
                     amount -= t.amount
-                if (t.receiver == transaction.sender):
+                if t.receiver == transaction.sender:
                     amount += t.amount
+
         return not (amount < transaction.amount)
 
     

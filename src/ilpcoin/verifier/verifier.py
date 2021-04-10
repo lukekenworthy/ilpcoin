@@ -74,7 +74,6 @@ class Verifier(Server):
 
 
 # TODO
-# test other random blockchain methods
 # test with fake blocks for verifier
 # test verifier communication
 # test transaction, POW, blockchain validation
