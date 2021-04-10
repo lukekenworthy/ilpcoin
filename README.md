@@ -18,3 +18,9 @@ or to run the verifier, run
 ```
 verifier <args>
 ```
+
+To run the test suite (all files beginning matching `test_<module_name>.py`), run
+```
+pytest
+```
+in the root directory.
