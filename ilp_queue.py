@@ -44,7 +44,7 @@ class IlpQueue:
         except:
             return None
 
-    def lookup_solution(self, id : int)  -> IlpSolutionp:
+    def lookup_solution(self, id : int)  -> IlpSolution:
         # do we want to query a verifier here?
         # how do we get these, anyway?
         try:
@@ -104,10 +104,13 @@ def get_solution_by_id(uid):
 def verify_ilp(uid):
     return str(ilp_queue.incr_count())
 
-@app.route('/get_neighbors/<n>', methods=['GET']):
+@app.route('/get_neighbors/<n>', methods=['GET'])
 def get_neighbors(n):
-    # todo
     pass
+    # todo
+
+if __name__ == "__main__": 
+    app.run()
 
 
 # @param VERIFIERS_REQUIRED
