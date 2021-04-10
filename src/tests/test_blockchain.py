@@ -1,4 +1,5 @@
 import unittest
+import pytest
 from ilpcoin.common.blockchain import Transaction, Block, Blockchain
 
 class SerializationTests(unittest.TestCase):
@@ -47,6 +48,3 @@ class SerializationTests(unittest.TestCase):
         chain2 = Blockchain().deserialize(chain1.serialize())
         self.assertEqual(chain1, chain2)
 
-
-if __name__ == '__main__':
-    unittest.main()
