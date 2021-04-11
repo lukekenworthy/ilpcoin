@@ -59,6 +59,7 @@ class Ilp:
     def getId(self) -> int:
         return self.uid
     
+    # DANGER: THIS DOES NOT WORK
     def __eq__(self, other):
         # k is the same
         result = self.k == other.k
@@ -74,12 +75,10 @@ class Ilp:
         result = result and (self.mip_ilp.vars == other.mip_ilp.vars)
         print("result", self.mip_ilp.vars[1])
 
-
         # same constraints
         num_constrs = len(self.mip_ilp.constrs)
         result = result and (num_constrs == len(other.mip_ilp.constrs))
         print("numconst", len(other.mip_ilp.constrs))
-
 
         if not result: 
             return False
