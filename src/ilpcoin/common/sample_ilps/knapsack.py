@@ -1,3 +1,6 @@
+# example inspired by https://docs.python-mip.com/en/latest/examples.html
+
+
 from mip import Model, xsum, maximize, BINARY, minimize
 from ilpcoin.common.ilp import Ilp
 
