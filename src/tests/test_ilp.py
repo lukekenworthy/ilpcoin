@@ -2,6 +2,7 @@ import unittest
 import random
 import pytest
 from ilpcoin.common.sample_ilps.knapsack import knapsack
+from ilpcoin.common.sample_ilps.traveling_salesman import traveling_salesman
 from ilpcoin.common.ilp import *
 
 
@@ -28,7 +29,6 @@ def pipe_solve_pipe_check(input_ilp):
 
 
 class KnapsackTests(unittest.TestCase):
-
     def test_ilp_solve_and_check_knapsack(self): 
         self.assertTrue(ilp_solve_and_check(knapsack()))
 
@@ -45,18 +45,36 @@ class KnapsackTests(unittest.TestCase):
     def test_pipe_solve_pipe_check_knapsack(self): 
         self.assertTrue(pipe_solve_pipe_check(knapsack()))
 
+class TsmTests(unittest.TestCase):
+    def test_ilp_solve_and_check_tsm(self): 
+        self.assertTrue(ilp_solve_and_check(traveling_salesman()))
 
-    # def test_ilp_serialize(self):
-    #     knapsack_model = knapsack()
-    #     print(knapsack_model)
-    #     reconstructed = Ilp.deserialize(knapsack_model.serialize())
-    #     print("Reconstructed:" + str(reconstructed.mip_ilp.objective))
-    #     print("Orig:" + str(knapsack_model.mip_ilp.objective))
+    def test_ilp_solve_post_serialization_tsm(self): 
+        self.assertTrue(ilp_solve_post_serialization(traveling_salesman()))
 
-    #     print("Reconstructed:" + str(reconstructed.mip_ilp.vars[3]))
-    #     print("Orig:" + str(knapsack_model.mip_ilp.vars[3]))
+    def test_ilp_serialization_basic_properties_tsm(self): 
+        self.assertTrue(ilp_serialization_basic_properties(traveling_salesman()))
 
-    #     self.assertTrue(knapsack_model == reconstructed)
-
-
+    def test_solution_serialization(self): 
+        soln = traveling_salesman().solve()
+        self.assertTrue(solution_serialization_check(soln))
     
+    def test_pipe_solve_pipe_check_tsm(self): 
+        self.assertTrue(pipe_solve_pipe_check(traveling_salesman()))
+
+
+
+# def test_ilp_serialize():
+#     knapsack_model = knapsack()
+#     print(knapsack_model)
+#     reconstructed = Ilp.deserialize(knapsack_model.serialize())
+#     print("Reconstructed:" + str(reconstructed.mip_ilp.objective))
+#     print("Orig:" + str(knapsack_model.mip_ilp.objective))
+
+#     print("Reconstructed:" + str(reconstructed.mip_ilp.vars[3]))
+#     print("Orig:" + str(knapsack_model.mip_ilp.vars[3]))
+
+#     self.assertTrue(knapsack_model == reconstructed)
+
+
+
