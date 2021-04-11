@@ -129,3 +129,7 @@ dmypy.json
 .pyre/
 
 .DS_Store
+
+# Temp ilp files (hack)
+temp_deserialize_file.lp
+temp_serialize_file.lp
