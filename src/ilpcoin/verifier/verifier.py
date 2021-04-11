@@ -5,6 +5,7 @@ from time import sleep
 from ilpcoin.common.blockchain import *
 import random
 import requests
+import logging
 
 HOST:str = 'localhost'
 PORT:int = 8000
@@ -27,53 +28,41 @@ class Verifier(Server):
     def get_blockchain(self) -> Blockchain:
         n: int = random.choice(self.neighbors)
         r = requests.get(HOST + ":" + str(PORT + n) + "/get_blockchain")
+        logging.debug("Got raw blockchain from neighbors " + r.content)
         return Blockchain().deserialize(r.content)
-
-    # do we have enough transactions to make a new block
-    def block_ready(self):
-        return len(self.transactions > self.blocksize)
 
     # main loop that runs the verifier
     def run(self) -> None:
+        i = 0
         while True:
-
+            i += 1
+            
             # found a completed block
             if (self.new_block > 0):
-                blockchain = self.blockchain()
-
+                logging.debug("Found block {i}")
                 potential_block = self.blocks_to_verify[-1]
 
                 # validate the transactions in the block
                 valid = potential_block.transactions[0].amount < self.reward
-                for t in potential_block.transactions[1:]:
-                    valid &= blockchain.verify_transaction(t)
+                for i in range(1, len(potential_block.transactions)):
+                    t = potential_block.transactions[i]
+                    valid &= self.blockchain.verify_transaction(t, i)
 
                 # validate proof of work
-                valid &= potential_block.validate_POW(blockchain.get_top())
+                valid &= potential_block.validate_POW(self.blockchain.get_top())
 
                 if valid:
-                    blockchain.add(potential_block)
+                    self.blockchain.add(potential_block)
                     self.blocks_to_verify.remove(potential_block)
-                    print('ADDED BLOCK')
+                    logging.debug("Added block " + potential_block.serialize())
                 else:
-                    print('BAD BLOCK')
+                    logging.debug("Rejected block " + potential_block.serialize())
                 self.new_block -= 1
 
-            # found a new transaction
-            if (self.new_transaction):
-                pass
-                '''
-                potential_transaction = self.server.transactions_to_verify[-1]
-                if self.server.blockchain.verify_transaction(potential_transaction):
-                    self.server.blockchain.add_transaction(potential_transaction)
-                    self.server.transactions_to_verify.remove(potential_transaction)
-                self.server.new_transaction = False'''
-
-            sleep(1)
+            sleep(0.5)
 
 
 
 # TODO
 # test with fake blocks for verifier
 # test verifier communication
-# test transaction, POW, blockchain validation

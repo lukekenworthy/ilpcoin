@@ -16,7 +16,7 @@ class IlpSolution:
         return pickle.loads(raw_bytes)
 
     def serialize(self) -> bytes:
-        return picke.dumps(self)
+        return pickle.dumps(self)
 
     def print_soln(self):
         # ToDo

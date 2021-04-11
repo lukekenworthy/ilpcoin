@@ -2,6 +2,7 @@
 
 import json
 import hashlib
+from ilpcoin.common.ilp import *
 
 class BadTransactionError(Exception):
     pass
@@ -30,13 +31,12 @@ class Transaction:
         self.amount = amount
         return self 
     
-    def serialize(self) -> str:
-        return json.dumps({'sender': self.sender, 'receiver': self.receiver, 'amount': self.amount})
+    def serialize(self) -> bytes:
+        return pickle.dumps(self)
     
-    def deserialize(self, data: str):
-        raw_data = json.loads(data)
-        self.initialize(sender=raw_data['sender'], receiver=raw_data['receiver'], amount=raw_data['amount'])
-        return self
+    @classmethod
+    def deserialize(self, data: bytes):
+        return pickle.loads(data)
 
 class Block:
 
@@ -46,11 +46,13 @@ class Block:
     
     def __init__(self, transactions: list=[], prev_hash: str='', nonce:int = 0):
         self.transactions: list = transactions
-        self.prev_hash: int = prev_hash
+        self.prev_hash: str = prev_hash
 
-        # waiting on jordan for exact rep, just leaving these guys as strings for now
-        self.ILP: str = ''
-        self.ILP_solution: str = ''
+        # ilp id
+        self.ILP: int = 0
+
+        # ilp solution
+        self.ILP_solution = ''
 
         self.nonce: int = nonce
     
@@ -60,31 +62,34 @@ class Block:
             check &= t1 == t2
         check &= self.prev_hash == other.prev_hash
         check &= self.ILP == other.ILP
-        check &= self.ILP_solution == other.ILP_solution
+        check &= self.ILP_solution== other.ILP_solution
         check &= self.nonce == other.nonce
         return check
 
-    def serialize(self) -> str:
-        serialized_transactions = [el.serialize() for el in self.transactions]
-        return json.dumps({"prev_hash": self.prev_hash, "ILP": self.ILP, "ILP_solution": self.ILP_solution,
-        "nonce": self.nonce, "transactions":serialized_transactions})
+    def serialize(self) -> bytes:
+        #serialized_transactions = [el.serialize() for el in self.transactions]        
+        return pickle.dumps(self)
+        #return json.dumps({"prev_hash": self.prev_hash, "ILP": str(self.ILP), "ILP_solution": str(self.ILP_solution.serialize()),
+        #"nonce": self.nonce, "transactions":serialized_transactions})
 
-    def deserialize(self, data: str) -> None:
-        raw_block: str = json.loads(data)
+    @classmethod
+    def deserialize(self, data: bytes) -> None:
+        return pickle.loads(data)
+        '''raw_block: str = json.loads(data)
         try:
             self.prev_hash: int = int(raw_block['prev_hash'])
-            self.ILP: str = raw_block['ILP']
-            self.ILP_solution:str = raw_block['ILP_solution']
+            self.ILP: int = int(raw_block['ILP'])
+            self.ILP_solution:IlpSolution = IlpSolution.deserialize(raw_block['ILP_solution'])
             self.nonce: int = int(raw_block['nonce'])
 
             raw_transactions: str = raw_block["transactions"]
             self.transactions = [Transaction().deserialize(el) for el in raw_transactions]
             return self
         except:
-            raise BadBlockError
+            raise BadBlockError'''
     
     def hash(self) -> bytes:
-        to_hash = bytes(self.ILP_solution + self.ILP + str(self.nonce) + self.prev_hash, 'utf-8')
+        to_hash = bytes(self.ILP_solution + str(self.ILP) + str(self.nonce) + self.prev_hash, 'utf-8')
         for t in self.transactions:
             to_hash += t.hash()
         return hashlib.sha256(to_hash).hexdigest()
@@ -96,8 +101,10 @@ class Block:
         check = previous.hash() == self.prev_hash 
 
         # check the ILP solution
-
-        # check that this is the correct ILP off the queue
+            # waiting on queue
+        # grab ILP from queue
+        # check that it's the right ILP
+        # check solution correctness
 
         # check that the hash puzzle was solved
         check &= self.validate_nonce(hardness)
@@ -123,13 +130,16 @@ class Blockchain:
             check &= b1 == b2
         return check
     
-    def serialize(self) -> str:
-        return json.dumps([b.serialize() for b in self.blockchain])
+    def serialize(self) -> bytes:
+        return pickle.dumps(self)
+        #return json.dumps([b.serialize() for b in self.blockchain])
     
+    @classmethod
     def deserialize(self, data:str) -> None:
-        raw_chain = json.loads(data)
+        return pickle.loads(data)
+        '''raw_chain = json.loads(data)
         self.blockchain = [Block().deserialize(el) for el in raw_chain]
-        return self
+        return self'''
     
     def get_top(self) -> Block:
         return self.blockchain[-1]
