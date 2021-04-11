@@ -27,8 +27,8 @@ class SerializableIlp:
     # create these from full-blown Ilp objects
     def __init__(self, full_ilp : 'Ilp'):
         # we need temp files to use mip's built in serialization; this is an ugly hack
-        # with  open("writefile.lp", "w+") as tempOutputFile:
-        with tempfile.NamedTemporaryFile(suffix=".lp") as tempOutputFile:
+        with  open("temp_serialize_file.lp", "w+") as tempOutputFile:
+        # with tempfile.NamedTemporaryFile(suffix=".lp") as tempOutputFile:
             full_ilp.mip_ilp.write(tempOutputFile.name)
             self.serialized_ilp = tempOutputFile.read()
             self.uid = full_ilp.uid
@@ -38,15 +38,13 @@ class SerializableIlp:
     # convert back to a full ilp.
     # any solution progress will be lost.
     def to_full_ilp(self) -> 'Ilp':
-        # return Ilp()
-        # with open("scratch.lp", "w+") as tempOutputFile:
-        with tempfile.NamedTemporaryFile(suffix=".lp") as tempOutputFile:
+        with open("temp_deserialize_file.lp", "w+") as tempOutputFile:
+        # with tempfile.NamedTemporaryFile(suffix=".lp") as tempOutputFile:
             # print("Deserialized: \n" + str(self.serialized_ilp) + "\n")
-
             tempOutputFile.write(self.serialized_ilp)
             deserialized_ilp = mip.Model()
-            deserialized_ilp.read("myfile.lp")
-            return Ilp(deserialized_ilp, self.k, self.uid)
+        deserialized_ilp.read("temp_deserialize_file.lp")
+        return Ilp(deserialized_ilp, self.k, self.uid)
         
 class Ilp:
     # create an Ilp from a mip model
