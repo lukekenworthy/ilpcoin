@@ -1,5 +1,6 @@
 import argparse
 from ilpcoin.verifier.verifier import *
+import logging
 
 def main():
     parser = argparse.ArgumentParser()
@@ -12,7 +13,10 @@ def main():
     HOST = args.host
     PORT = int(args.port)
 
-    verifier = Verifier(id)
+    logging.basicConfig(filename='verifier.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+    logging.basicConfig(level=logging.DEBUG)
+
+    verifier = Verifier(id, host=HOST, port=PORT, testing=args.t)
     verifier.run()
 
 if __name__ == '__main__':
