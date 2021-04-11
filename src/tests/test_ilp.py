@@ -18,7 +18,10 @@ def ilp_serialization_basic_properties(input_ilp):
     reconstructed = Ilp.deserialize(input_ilp.serialize())
     return reconstructed.k == input_ilp.k and reconstructed.uid == input_ilp.uid
 
-class IlpTests(unittest.TestCase):
+def solution_serialization_check(input_soln): 
+    return IlpSolution.deserialize(input_soln.serialize()) == input_soln
+
+class KnapsackTests(unittest.TestCase):
 
     def test_ilp_solve_and_check_knapsack(self): 
         self.assertTrue(ilp_solve_and_check(knapsack()))
@@ -28,6 +31,12 @@ class IlpTests(unittest.TestCase):
 
     def test_ilp_serialization_basic_properties_knapsack(self): 
         self.assertTrue(ilp_serialization_basic_properties(knapsack()))
+
+    def test_solution_serialization(self): 
+        soln = knapsack().solve()
+        self.assertTrue(solution_serialization_check(soln))
+
+
 
     # def test_ilp_serialize(self):
     #     knapsack_model = knapsack()

@@ -6,6 +6,8 @@ import tempfile
 
 MAX_TIME = 300
 
+# Class representing the solution to an Ilp. 
+# 
 class IlpSolution:
     def __init__(self, solved_ilp : 'Ilp'):
         self.ilp_id = solved_ilp.uid
@@ -16,7 +18,12 @@ class IlpSolution:
         return pickle.loads(raw_bytes)
 
     def serialize(self) -> bytes:
-        return picke.dumps(self)
+        return pickle.dumps(self)
+
+    def __eq__(self, other):
+        return isinstance(other, IlpSolution) and \
+               self.ilp_id == other.ilp_id  and \
+               self.variable_results == other.variable_results
 
     def print_soln(self):
         # ToDo
