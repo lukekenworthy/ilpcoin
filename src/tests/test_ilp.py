@@ -7,7 +7,6 @@ from ilpcoin.common.ilp import *
 
 def ilp_solve_and_check(input_ilp): 
     soln = input_ilp.solve()
-    # print("vars,", str(soln.variable_results))
     return input_ilp.check(soln)
 
 def ilp_solve_post_serialization(input_ilp): 
@@ -20,6 +19,13 @@ def ilp_serialization_basic_properties(input_ilp):
 
 def solution_serialization_check(input_soln): 
     return IlpSolution.deserialize(input_soln.serialize()) == input_soln
+
+def pipe_solve_pipe_check(input_ilp):
+    reconstructed = Ilp.deserialize(input_ilp.serialize())
+    soln = reconstructed.solve()
+    reconstructed_soln = IlpSolution.deserialize(soln.serialize())
+    return input_ilp.check(soln)
+
 
 class KnapsackTests(unittest.TestCase):
 
@@ -35,7 +41,9 @@ class KnapsackTests(unittest.TestCase):
     def test_solution_serialization(self): 
         soln = knapsack().solve()
         self.assertTrue(solution_serialization_check(soln))
-
+    
+    def test_pipe_solve_pipe_check_knapsack(self): 
+        self.assertTrue(pipe_solve_pipe_check(knapsack()))
 
 
     # def test_ilp_serialize(self):
