@@ -13,9 +13,10 @@ PORT:int = 8000
 class Verifier(Server):
 
     def __init__(self, id:int, reward:int = 6, host: str=HOST, port: int=PORT, testing=False):
-
         # hardcoded for now - eventually we will ask the queue for these
-        self.neighbors = [1, 2, 3].remove(id)
+        self.neighbors = [1, 2, 3]
+        self.neighbors.remove(id)
+        self.testing = testing
 
         super().__init__(id, self.get_blockchain(), host, port, testing)
         self.start()
@@ -26,10 +27,11 @@ class Verifier(Server):
 
     # get blockchain from neighbors when starting up
     def get_blockchain(self) -> Blockchain:
-        n: int = random.choice(self.neighbors)
-        r = requests.get(HOST + ":" + str(PORT + n) + "/get_blockchain")
-        logging.debug("Got raw blockchain from neighbors " + r.content)
-        return Blockchain().deserialize(r.content)
+        if not self.testing:
+            n: int = random.choice(self.neighbors)
+            r = requests.get(HOST + ":" + str(PORT + n) + "/get_blockchain")
+            logging.debug("Got raw blockchain from neighbors " + r.content)
+            return Blockchain().deserialize(r.content)
 
     # main loop that runs the verifier
     def run(self) -> None:
