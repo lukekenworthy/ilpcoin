@@ -12,29 +12,36 @@ VERIFIERS_REQUIRED = 3
 # ToDo: Input sanitization
 # ToDo
 
+# IlpQueue represents a queue of ilps. 
+# This state needs to be written to databases. 
 class IlpQueue:
     def __init__(self):
-        self.q = queue.Queue()
-        self.top : Ilp = None
-        self.count : int = 0
-        self.ilp_history : dict[int, Ilp] = {}
-        self.soln_history : dict[int, IlpSolution] = {}
-        self.last_used_uid = 0
+        self.q = queue.Queue() # the queue 
+        self.top : Ilp = None  # the top ilp, currently worked on by miners
+        self.count : int = 0   # the number of verifiers who have provided solutions for self.top
+        self.ilp_history : dict[int, Ilp] = {} # a dictionary mapping all previous ilp IDs to their ilp problems. 
+        self.soln_history : dict[int, IlpSolution] = {} #  a dictionary mapping all previous solved ilp IDs to their solutions. Right now, this is never updated
+        self.last_used_uid = 0 # last uid; let's not repeat uids!   
 
+    # Eventually, this will query a database and reconstruct the Ilp from there
     @classmethod
     def resume_from_database(cls) -> 'IlpQueue':
         #ToDo
         return cls()
 
+    # Add an Ilp (see ilp.py for representation) to the back of the queue
     def add(self, ilp : Ilp) -> int:
         last_used_uid += 1
-        ilp.setId(last_used_uid)
+        ilp.set_id(last_used_uid)
         self.q.put(ilp)
-        return ilp.getId()
+        self.ilp_history[ilp.get_id()] = ilp
+        return ilp.get_id()
 
+    # Return the current ilp to work on
     def get_top(self) -> Ilp:
         return self.top
 
+    # ToDo
     def lookup_ilp(self, id : int) -> Ilp:
         # do we want to query a verifier here?
         try:
@@ -57,6 +64,8 @@ class IlpQueue:
             self.top = None
         self.count = 0
 
+    # Called when a solution has come in for the current Ilp to increment count, 
+    # and move to the next item in the queue if need be. 
     def incr_count(self, uid : int) -> bool:
         if not self.get_top():
             return False

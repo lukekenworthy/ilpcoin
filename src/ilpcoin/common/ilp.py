@@ -4,15 +4,22 @@ import mip
 import pickle
 import tempfile
 
-MAX_TIME = 300
-
 # Class representing the solution to an Ilp. 
-# 
 class IlpSolution:
-    def __init__(self, solved_ilp : 'Ilp'):
+    # Create a solution from an Ilp class that has bee
+    def __init__(self, solved_ilp : 'Ilp', status=mip.OptimizationStatus.OPTIMAL):
         self.ilp_id = solved_ilp.uid
+
+        # No solution is set when the ilp has been proven to have no solution.
+        self.no_solution = status == mip.OptimizationStatus.INFEASIBLE
+        # Associates a solution with its ilp by ID
+        
+        # The results for each variable, as a dict
+        # Keys are python-mip generated variables names, and values are the value of 
+        # that variable in the solution.
         self.variable_results = {v.name : v.x for v in solved_ilp.mip_ilp.vars}
 
+    # Pickling; safe to send around
     @classmethod
     def deserialize(cls, raw_bytes : bytes):
         return pickle.loads(raw_bytes)
@@ -30,7 +37,8 @@ class IlpSolution:
         pass
 
 # Contains the subset of the state from the more complex Ilp class that we want to serialize and send around
-class SerializableIlp:
+# Internal to this module. Never manually instantiate or use. 
+class _SerializableIlp:
     # create these from full-blown Ilp objects
     def __init__(self, full_ilp : 'Ilp'):
         # we need temp files to use mip's built in serialization; this is an ugly hack
@@ -44,6 +52,7 @@ class SerializableIlp:
 
     # convert back to a full ilp.
     # any solution progress will be lost.
+    # this is a terrible hack
     def to_full_ilp(self) -> 'Ilp':
         with open("temp_deserialize_file.lp", "w+") as tempOutputFile:
         # with tempfile.NamedTemporaryFile(suffix=".lp") as tempOutputFile:
@@ -53,17 +62,22 @@ class SerializableIlp:
         deserialized_ilp.read("temp_deserialize_file.lp")
         return Ilp(deserialized_ilp, self.k, self.uid)
         
+# Universal representation of a decision-problem ILP for all of ilpcoin.
 class Ilp:
-    # create an Ilp from a mip model
-    def __init__(self, mip_ilp : mip.Model, k : float, uid : int = -1):
+
+    # Create a decision Ilp from a mip model, some k, a uid (set by the queue after instantiation, typically).
+    # Set maximize to true for the ilp to be solved if objective function evaluates > k, rather than less.
+    def __init__(self, mip_ilp : mip.Model, k : float, uid : int = -1, maximize = False):
         self.mip_ilp = mip_ilp
         self.uid = uid
         self.k = k
+        self.maximize = False
 
-    def setId(self, uid: int) -> None:
+    # Set this Ilp's system wide UID. Normally the queue does this when it is added by a client. 
+    def set_id(self, uid: int) -> None:
         self.uid = uid
 
-    def getId(self) -> int:
+    def get_id(self) -> int:
         return self.uid
     
     # DANGER: THIS DOES NOT WORK
@@ -73,19 +87,19 @@ class Ilp:
 
         # same uid
         result = result and self.uid == other.uid
-        print("result", result)
+        # print("result", result)
 
         # same objectives
         # result = result and self.mip_ilp.objective.equals(other.mip_ilp.objective)
 
         # same vars
         result = result and (self.mip_ilp.vars == other.mip_ilp.vars)
-        print("result", self.mip_ilp.vars[1])
+        # print("result", self.mip_ilp.vars[1])
 
         # same constraints
         num_constrs = len(self.mip_ilp.constrs)
         result = result and (num_constrs == len(other.mip_ilp.constrs))
-        print("numconst", len(other.mip_ilp.constrs))
+        # print("numconst", len(other.mip_ilp.constrs))
 
         if not result: 
             return False
@@ -95,19 +109,23 @@ class Ilp:
         return result
 
  
-    # try to solve for up to MAX_TIME and return a solution class
-    def solve(self) -> IlpSolution:
-        status = self.mip_ilp.optimize(max_seconds = MAX_TIME)
+    # Try to solve for up to max_time and return a solution object, described above.
+    def solve(self, max_time = 300) -> IlpSolution:
+        status = self.mip_ilp.optimize(max_seconds = max_time)
+        # Solution can be infeasible (no solution) or the actual solution. 
         if (status == mip.OptimizationStatus.INFEASIBLE or status == mip.OptimizationStatus.OPTIMAL):
-            return IlpSolution(self)
+            return IlpSolution(self, mip.OptimizationStatus.INFEASIBLE )
         else:
+            # No solution found in time. 
             return None
 
-    # dump bytes
+    # Serialize ilp to bytes. 
+    # Preserves only information about the ilp problem, not any of the solving machinery 
+    # or internal solutions. 
     def serialize(self) -> bytes:
-        return pickle.dumps(SerializableIlp(self))
+        return pickle.dumps(_SerializableIlp(self))
 
-    # from bytes
+    # Deserialize an ilp from bytes. See `serialize` note about what is preserved. 
     @classmethod
     def deserialize(cls, raw_bytes : bytes) -> 'Ilp':
         return pickle.loads(raw_bytes).to_full_ilp()
@@ -121,11 +139,15 @@ class Ilp:
 
         return res
 
+    # Check if an IlpSolution object ssatisfies this ilp. 
     def check(self, solution : IlpSolution) -> bool:
-        solution_value = self.__eval_objective_function(solution)
-        return solution_value < self.k
+        try: 
+            # The solution isn't for this ilp. 
+            if solution.ilp_id != self.uid: 
+                return False
 
-
-
-
-
+            solution_value = self.__eval_objective_function(solution)
+            return solution_value > self.k if self.maximize else solution_value < self.k 
+        except: 
+            # If we can't check it, it's not a solution. 
+            return False
