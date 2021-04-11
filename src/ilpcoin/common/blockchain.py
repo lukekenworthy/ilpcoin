@@ -22,7 +22,7 @@ class Transaction:
         return check
     
     def hash(self) -> bytes:
-        to_hash = bytes(self.sender+self.receiver+self.amount, 'utf-8')
+        to_hash = bytes(self.sender+self.receiver+str(self.amount), 'utf-8')
         return hashlib.sha256(to_hash).hexdigest()
     
     def initialize(self, sender:str, receiver: str, amount: int):
@@ -91,14 +91,15 @@ class Block:
     def hash(self) -> bytes:
         to_hash = bytes(self.ILP_solution + str(self.ILP) + str(self.nonce) + self.prev_hash, 'utf-8')
         for t in self.transactions:
-            to_hash += t.hash()
+            to_hash += t.serialize()
         return hashlib.sha256(to_hash).hexdigest()
 
     # both miners and verifiers should use this method to validate blocks
     def validate_POW(self, previous, hardness: int) -> bool:
 
         # check that the previous_hash is correct
-        check = previous.hash() == self.prev_hash 
+        if previous:
+            check = previous.hash() == self.prev_hash 
 
         # check the ILP solution
             # waiting on queue
@@ -114,6 +115,7 @@ class Block:
     # both miners and verifiers should use this method to validate a nonce
     def validate_nonce(self, hardness: int) -> bool:
         try:
+            print(int(self.hash()[len(self.hash()) - hardness:]))
             return int(self.hash()[len(self.hash()) - hardness:]) == 0
         except:
             return False

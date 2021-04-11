@@ -49,6 +49,8 @@ class Verifier(Server):
                 for i in range(1, len(potential_block.transactions)):
                     t = potential_block.transactions[i]
                     valid &= self.blockchain.verify_transaction(t, i)
+                if not valid:
+                    logging.debug("Invalid transaction found.")
 
                 # validate proof of work
                 valid &= potential_block.validate_POW(self.blockchain.get_top())
@@ -61,7 +63,7 @@ class Verifier(Server):
                     logging.debug("Rejected block " + potential_block.serialize())
                 self.new_block -= 1
 
-            sleep(0.5)
+            sleep(0.01)
 
 
 
