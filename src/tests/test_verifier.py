@@ -45,9 +45,6 @@ import multiprocessing
         #p = multiprocessing.Process(target=self.verifier.run)
 
 '''
-# stuff to fix
-# implement verifier registration
-#implement communication with queue
 
 
 

@@ -4,6 +4,7 @@ import hashlib
 from typing import List, Optional
 from ilpcoin.common.ilp import *
 from ilpcoin.common.constants import *
+import requests
 
 class BadTransactionError(Exception):
     pass
@@ -42,7 +43,7 @@ class Block:
     '''
     
     def __init__(self, transactions: List[Transaction]=[], prev_hash: str='', nonce:int = 0, 
-    ILP: int=0, ILP_solution: Optional[IlpSolution]=None):
+    ILP: int=0, ILP_solution: Optional[IlpSolution]=None, testing=False):
         self.transactions: List[Transaction] = transactions
         self.prev_hash: str = prev_hash
 
@@ -53,6 +54,7 @@ class Block:
         self.ILP_solution: Optional[IlpSolution] = ILP_solution
 
         self.nonce: int = nonce
+        self.testing = testing
     
     def __eq__(self, other: 'Block'):
         check: bool = True
@@ -65,11 +67,10 @@ class Block:
         return check
 
     def serialize(self) -> bytes:
-        #serialized_transactions = [el.serialize() for el in self.transactions]        
         return pickle.dumps(self)
 
     @classmethod
-    def deserialize(cls, data: bytes) -> None:
+    def deserialize(cls, data: bytes) -> 'Block':
         return pickle.loads(data)
     
     def hash(self) -> str:
@@ -77,6 +78,12 @@ class Block:
         for t in self.transactions:
             to_hash += t.serialize()
         return hashlib.sha256(to_hash).hexdigest()
+    
+    # check that the current block solved the top of the queue
+    def validate_top_of_queue(self):
+        r = requests.get(QUEUE_HOST + ":" + str(QUEUE_PORT) + "/get_top_ilp")
+        top_ILP = Ilp.deserialize(r.content)
+        return self.ILP == top_ILP.get_id()
 
     # both miners and verifiers should use this method to validate blocks
     def validate_block(self, previous: Optional['Block'], hardness: int) -> bool:
@@ -86,12 +93,15 @@ class Block:
         # check that the previous_hash is correct
         if previous:
             check &= previous.hash() == self.prev_hash 
-
-        # check the ILP solution
-            # waiting on queue
-        # grab ILP from queue
-        # check that it's the right ILP
-        # check solution correctness
+        
+        if not self.testing:
+            r = requests.get(QUEUE_HOST + ":" + str(QUEUE_PORT) + "/" + 'get_ilp_by_id/' + str(self.ILP))
+            if r.content == ILP_NOT_FOUND:
+                return False 
+            else:
+                full_ILP = Ilp.deserialize(r.content)
+                if self.ILP_solution:
+                    check &= full_ILP.check(self.ILP_solution)
 
         if self.transactions != []:
             check &= self.transactions[0].sender == self.transactions[0].receiver
@@ -129,12 +139,16 @@ class Blockchain:
     def deserialize(cls, data:bytes) -> None:
         return pickle.loads(data)
     
-    def get_top(self) -> Block:
-        return self.blockchain[-1]
+    def get_top(self) -> Optional[Block]:
+        if self.blockchain != []:
+            return None
+        else:
+            return self.blockchain[-1]
     
     def add_block(self, block: Block):
         self.blockchain.append(block)
     
+    # returns the amount of money that user has in the blockchain
     def get_value_by_user(self, user: str, block_index: int, trans_index: int) -> int:
         amount = 0
 
@@ -160,10 +174,25 @@ class Blockchain:
     def get_len(self) -> int:
         return len(self.blockchain)
     
+    # get an ILP solution by id -> used by the queue to service clients 
     def get_solution_by_id(self, id:int) ->  Optional[IlpSolution]:
         for b in self.blockchain:
             if b.ILP == id:
                 return b.ILP_solution
         return None
+    
+    # verify the entire blockchain for consistency and valid POWs
+    def verify_blockchain(self) -> bool:
+        previous = None
+        for i in range(len(self.blockchain)):
+            if not self.blockchain[i].validate_block(previous, HARDNESS):
+                return False 
+            previous = self.blockchain[i]
+            
+            # skip genesis transaction - that's a blockwide property
+            for t in range(1, len(self.blockchain[i].transactions[1:])):
+                if not self.verify_transaction(self.blockchain[i].transactions[t], i, t):
+                    return False 
+        return True 
 
     

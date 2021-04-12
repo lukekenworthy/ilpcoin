@@ -1,11 +1,12 @@
 #!usr/bin/env python3
 
+from pickle import bytes_types
 from typing import Optional
 from flask import Flask, request
 from ilpcoin.common.blockchain import Block, Blockchain, Transaction
 import threading
 import logging
-from ilpcoin.common.constants import BLOCKSIZE
+from ilpcoin.common.constants import *
 from ilpcoin.verifier.__main__ import verifier
 
 app = Flask(__name__)
@@ -34,20 +35,20 @@ class Server:
     def start(self):
         if not self.testing:
             logging.debug("Starting server")
-            threading.Thread(target=app.run, kwargs={"debug":False, "host":self.host, "port":self.port}).start()
+            threading.Thread(target=app.run, kwargs={"debug":False, "host":self.host, "port":self.port}, threaded=True).start()
         else:
             logging.debug("Test mode suppressing server")
 
 app = Flask(__name__)
 
 # used by miners to send a mined block and by verifiers to send a verified block
+# this block should be the top of the blockchain
 @app.route('/send_block', methods=['POST'])
 def get_block():
-    block = Block().deserialize(request.form['block'])
-    verifier.blocks_to_verify.append(block)
-    verifier.new_block += 1
-    logging.debug("Got block " + request.form['block'])
-    return 'TODO'
+    block: Block = Block.deserialize(request.form['block'])
+    r = verifier.process_new_block(block)
+    logging.debug("Processed block and responded {r}")
+    return r
 
 # used for initialization
 @app.route('/get_blockchain', methods=['GET'])
@@ -58,8 +59,11 @@ def give_blockchain():
 # used by miners to get the previous block
 @app.route('/get_previous', methods=['GET'])
 def get_previous():
-    logging.debug("Giving previous " + str(verifier.blockchain.get_top().serialize()))
-    return verifier.blockchain.get_top().serialize()
+    b = verifier.blockchain.get_top()
+    if not b:
+        return EMPTY_CHAIN
+    logging.debug("Giving previous " + str(b.serialize()))
+    return b.serialize()
 
 # used by verifiers to check that they're on the right fork
 @app.route('/get_length', methods=['GET'])
@@ -78,7 +82,7 @@ def get_ilp_solution(id):
     if l: 
         return l.serialize() 
     else: 
-        return '2: Not found' 
+        return ILP_NOT_FOUND 
 
 
 

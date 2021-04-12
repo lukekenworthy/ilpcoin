@@ -1,14 +1,10 @@
 import argparse
-<<<<<<< HEAD
 from typing import Optional
 from ilpcoin.verifier.verifier import Verifier
+from ilpcoin.common.constants import *
 import logging
 
 verifier: Optional[Verifier] = None
-=======
-from ilpcoin.verifier.verifier import *
-import logging
->>>>>>> d0554daa24b9d1d302444e4bbbfeaf73eb91bd4d
 
 def main():
     parser = argparse.ArgumentParser()
@@ -21,15 +17,8 @@ def main():
     logging.basicConfig(filename='logs/verifier.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
     logging.basicConfig(level=logging.DEBUG)
 
-<<<<<<< HEAD
     global verifier
-=======
-    logging.basicConfig(filename='logs/verifier.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
-    logging.basicConfig(level=logging.DEBUG)
-
->>>>>>> d0554daa24b9d1d302444e4bbbfeaf73eb91bd4d
     verifier = Verifier(id=args.id, host=HOST, port=PORT, testing=args.t)
-    verifier.run()
 
 if __name__ == '__main__':
     main()
