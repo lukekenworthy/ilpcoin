@@ -2,23 +2,22 @@ import unittest
 import random
 import pytest
 from ilpcoin.common.blockchain import Transaction, Block, Blockchain
-from ilpcoin.verifier.verifier import Verifier
 import multiprocessing
 
 
-class VerifierTests(unittest.TestCase):
+'''class VerifierTests(unittest.TestCase):
     
     hardness = 0
 
     def setup(self):
 
-        t0 = Transaction().initialize(sender="lav", receiver="lav", amount=5)
+        t0 = Transaction(sender="lav", receiver="lav", amount=5)
 
         # some transactions
-        t1 = Transaction().initialize(sender="lav", receiver="luke", amount=3)
-        t2 = Transaction().initialize(sender="luke", receiver="lav", amount=1)
-        t3 = Transaction().initialize(sender="lav", receiver="luke", amount=1)
-        t4 = Transaction().initialize(sender="lav", receiver="luke", amount=1)
+        t1 = Transaction(sender="lav", receiver="luke", amount=3)
+        t2 = Transaction(sender="luke", receiver="lav", amount=1)
+        t3 = Transaction(sender="lav", receiver="luke", amount=1)
+        t4 = Transaction(sender="lav", receiver="luke", amount=1)
 
         # this is the genesis block
         self.b0 = Block(transactions=[t0, t1 ], prev_hash='', nonce=0)
@@ -27,13 +26,13 @@ class VerifierTests(unittest.TestCase):
         
         self.verifier = Verifier(1, testing=True)
 
-        self.verifier.blockchain = Blockchain([self.b0], blocksize=5)
+        self.verifier.blockchain = Blockchain([self.b0])
     
     def test_valid_chain(self):
 
         self.setup()
 
-        t0 = Transaction().initialize("luke", "lav", 1)
+        t0 = Transaction("luke", "lav", 1)
         b1 = Block(transactions=[t0], prev_hash = self.b0.hash(), nonce=0)
         while not b1.validate_nonce(self.hardness):
             b1.nonce = random.randint(1, 10000000000)
@@ -45,15 +44,10 @@ class VerifierTests(unittest.TestCase):
         # run the main verifier thread for 1 second
         #p = multiprocessing.Process(target=self.verifier.run)
 
-
+'''
 # stuff to fix
-# flask shit 
-# typing using pylance 
-# any dumb errors you've made 
-# remove transaction 
-# fix block reward stuff
-# get $$ for user
 # implement verifier registration
+#implement communication with queue
 
 
 
