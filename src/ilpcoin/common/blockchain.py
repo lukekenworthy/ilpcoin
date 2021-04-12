@@ -102,6 +102,7 @@ class Block:
     # both miners and verifiers should use this method to validate a nonce
     def validate_nonce(self, hardness: int) -> bool:
         try:
+            print(int(self.hash()[len(self.hash()) - hardness:]))
             return int(self.hash()[len(self.hash()) - hardness:]) == 0
         except:
             return False
