@@ -19,6 +19,7 @@ def main():
 
     global verifier
     verifier = Verifier(id=args.id, host=HOST, port=PORT, testing=args.t)
+    verifier.run()
 
 if __name__ == '__main__':
     main()

@@ -27,7 +27,7 @@ class SerializationTests(unittest.TestCase):
         # setup
         t = Transaction(sender='lavanya', receiver='jordan', amount=5)
 
-        b1 = Block(transactions=[t], prev_hash = '', nonce=0, ILP=0, ILP_solution=ILP_solution)
+        b1 = Block(transactions=[t], prev_hash = '', nonce=0, ILP=0, ILP_solution=ILP_solution, testing=True)
         b2 = Block.deserialize(b1.serialize())
 
         self.assertEqual(b1, b2)
@@ -36,7 +36,7 @@ class SerializationTests(unittest.TestCase):
 
         # setup
         t = Transaction(sender='lavanya', receiver='jordan', amount=5)
-        block = Block(transactions=[t], prev_hash = '', nonce=0, ILP=0, ILP_solution=ILP_solution)
+        block = Block(transactions=[t], prev_hash = '', nonce=0, ILP=0, ILP_solution=ILP_solution, testing=True)
 
         chain1 = Blockchain([block])
         chain2 = Blockchain.deserialize(chain1.serialize())
@@ -44,11 +44,16 @@ class SerializationTests(unittest.TestCase):
 
 class BlockchainTests(unittest.TestCase):
 
+    @classmethod
+    def setup_class(cls):
+        global ILP_solution
+        ILP_solution = ILP.solve()
+
     def setup(self):
-        self.previous = Block(transactions=[], prev_hash='', nonce=0, ILP=0, ILP_solution=ILP_solution)
+        self.previous = Block(transactions=[], prev_hash='', nonce=0, ILP=0, ILP_solution=ILP_solution, testing=True)
         self.hardness = 1
 
-        self.b = Block(transactions=[], prev_hash = self.previous.hash(), nonce=41, ILP=0, ILP_solution=ILP_solution)
+        self.b = Block(transactions=[], prev_hash = self.previous.hash(), nonce=41, ILP=0, ILP_solution=ILP_solution, testing=True)
 
         # find a good nonce
         while not self.b.validate_nonce(self.hardness):
@@ -64,11 +69,11 @@ class BlockchainTests(unittest.TestCase):
         self.b.nonce = 0
         self.assertFalse(self.b.validate_nonce(self.hardness))
 
-    def test_validate_POW(self):
+    def test_validate_block(self):
         self.setup()
         self.assertTrue(self.b.validate_block(self.previous, self.hardness))
 
-    def test_falsify_POW(self):
+    def test_falsify_block(self):
         self.setup()
         self.b.prev_hash = ''
         self.assertFalse(self.b.validate_block(self.previous, self.hardness))
@@ -84,7 +89,7 @@ class BlockchainTests(unittest.TestCase):
         t3 = Transaction(sender="lav", receiver="luke", amount=1)
         t4 = Transaction(sender="lav", receiver="luke", amount=10)
 
-        b = Blockchain(blocks=[Block(transactions=[t0, t1, t2, t3, t4], ILP=0, ILP_solution=ILP_solution)])
+        b = Blockchain(blocks=[Block(transactions=[t0, t1, t2, t3, t4], ILP=0, ILP_solution=ILP_solution, testing=True)])
 
         # ignoring t4
         self.assertTrue(b.verify_transaction(t3, 2, 3))

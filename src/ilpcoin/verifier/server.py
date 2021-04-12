@@ -7,7 +7,7 @@ from ilpcoin.common.blockchain import Block, Blockchain, Transaction
 import threading
 import logging
 from ilpcoin.common.constants import *
-from ilpcoin.verifier.__main__ import verifier
+import ilpcoin.verifier.__main__ as main
 
 app = Flask(__name__)
 
@@ -33,11 +33,8 @@ class Server:
         self.blockchain = b
 
     def start(self):
-        if not self.testing:
-            logging.debug("Starting server")
-            threading.Thread(target=app.run, kwargs={"debug":False, "host":self.host, "port":self.port}, threaded=True).start()
-        else:
-            logging.debug("Test mode suppressing server")
+        logging.debug("Starting server")
+        threading.Thread(target=app.run, kwargs={"debug":False, "host":self.host, "port":self.port, "threaded":True}).start()
 
 app = Flask(__name__)
 
@@ -46,20 +43,20 @@ app = Flask(__name__)
 @app.route('/send_block', methods=['POST'])
 def get_block():
     block: Block = Block.deserialize(request.form['block'])
-    r = verifier.process_new_block(block)
+    r = main.verifier.process_new_block(block)
     logging.debug("Processed block and responded {r}")
     return r
 
 # used for initialization
 @app.route('/get_blockchain', methods=['GET'])
 def give_blockchain():
-    logging.debug("Giving blockchain " + str(verifier.blockchain.serialize()))
-    return verifier.blockchain.serialize()
+    logging.debug("Giving blockchain " + str(main.verifier.blockchain.serialize()))
+    return main.verifier.blockchain.serialize()
 
 # used by miners to get the previous block
 @app.route('/get_previous', methods=['GET'])
 def get_previous():
-    b = verifier.blockchain.get_top()
+    b = main.verifier.blockchain.get_top()
     if not b:
         return EMPTY_CHAIN
     logging.debug("Giving previous " + str(b.serialize()))
@@ -68,17 +65,17 @@ def get_previous():
 # used by verifiers to check that they're on the right fork
 @app.route('/get_length', methods=['GET'])
 def get_length(self):
-    logging.debug("Giving length " + str(verifier.blockchain.get_len()))
-    return str(verifier.blockchain.get_len())
+    logging.debug("Giving length " + str(main.verifier.blockchain.get_len()))
+    return str(main.verifier.blockchain.get_len())
 
 @app.route('/get_value_by_user/<username>', methods=['GET'])
 def get_value_by_user(username):
-    l = verifier.blockchain.get_len()
-    return str(verifier.blockchain.get_value_by_user(username, l, BLOCKSIZE))
+    l = main.verifier.blockchain.get_len()
+    return str(main.verifier.blockchain.get_value_by_user(username, l, BLOCKSIZE))
 
 @app.route('/get_ilp_solution/<id>', methods=['GET'])
 def get_ilp_solution(id):
-    l = verifier.blockchain.get_solution_by_id(id)
+    l = main.verifier.blockchain.get_solution_by_id(id)
     if l: 
         return l.serialize() 
     else: 
