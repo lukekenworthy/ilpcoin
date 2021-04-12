@@ -12,30 +12,27 @@ class BadBlockError(Exception):
 
 class Transaction:
 
-    def __init__(self):
-        pass
+    def __init__(self, sender:str='', receiver: str='', amount: int=0):
+        self.sender = sender
+        self.receiver = receiver
+        self.amount = amount
+        return self 
 
-    def __eq__(self, other):
+    def __eq__(self, other:'Transaction'):
         check = self.sender == other.sender
         check &= self.receiver == other.receiver
         check &= self.amount == other.amount
         return check
     
-    def hash(self) -> bytes:
+    def hash(self) -> str:
         to_hash = bytes(self.sender+self.receiver+str(self.amount), 'utf-8')
         return hashlib.sha256(to_hash).hexdigest()
-    
-    def initialize(self, sender:str, receiver: str, amount: int):
-        self.sender = sender
-        self.receiver = receiver
-        self.amount = amount
-        return self 
     
     def serialize(self) -> bytes:
         return pickle.dumps(self)
     
     @classmethod
-    def deserialize(self, data: bytes):
+    def deserialize(cls, data: bytes):
         return pickle.loads(data)
 
 class Block:
@@ -73,7 +70,7 @@ class Block:
         #"nonce": self.nonce, "transactions":serialized_transactions})
 
     @classmethod
-    def deserialize(self, data: bytes) -> None:
+    def deserialize(cls, data: bytes) -> None:
         return pickle.loads(data)
         '''raw_block: str = json.loads(data)
         try:
@@ -88,7 +85,7 @@ class Block:
         except:
             raise BadBlockError'''
     
-    def hash(self) -> bytes:
+    def hash(self) -> str:
         to_hash = bytes(self.ILP_solution + str(self.ILP) + str(self.nonce) + self.prev_hash, 'utf-8')
         for t in self.transactions:
             to_hash += t.serialize()
@@ -107,6 +104,8 @@ class Block:
         # check that it's the right ILP
         # check solution correctness
 
+        # check genesis transaction
+
         # check that the hash puzzle was solved
         check &= self.validate_nonce(hardness)
 
@@ -119,6 +118,9 @@ class Block:
             return int(self.hash()[len(self.hash()) - hardness:]) == 0
         except:
             return False
+    
+    def set_nonce(self, nonce:int) -> None:
+        self.nonce = nonce
 
 class Blockchain:
 
@@ -137,7 +139,7 @@ class Blockchain:
         #return json.dumps([b.serialize() for b in self.blockchain])
     
     @classmethod
-    def deserialize(self, data:str) -> None:
+    def deserialize(cls, data:str) -> None:
         return pickle.loads(data)
         '''raw_chain = json.loads(data)
         self.blockchain = [Block().deserialize(el) for el in raw_chain]

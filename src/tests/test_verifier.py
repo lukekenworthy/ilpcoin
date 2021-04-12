@@ -46,9 +46,14 @@ class VerifierTests(unittest.TestCase):
         #p = multiprocessing.Process(target=self.verifier.run)
 
 
-
-
-
+# stuff to fix
+# flask shit 
+# typing using pylance 
+# any dumb errors you've made 
+# remove transaction 
+# fix block reward stuff
+# get $$ for user
+# implement verifier registration
 
 
 

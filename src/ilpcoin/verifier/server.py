@@ -39,21 +39,22 @@ class Server:
         else:
             logging.debug("Test mode suppressing server")
 
-    # used by miners to send a mined block and by verifiers to send a verified block
-    @app.route('/send_block', methods=['POST'])
-    def get_block():
-        try:
-            block = Block().deserialize(request.form['block'])
-            self.blocks_to_verify.append(block)
-            self.new_block += 1
+app = Flask(__name__)
 
-            logging.debug("Got block " + request.form['block'])
-        except:
-            logging.warn("Bad Request, no block found")
+# used by miners to send a mined block and by verifiers to send a verified block
+@app.route('/send_block', methods=['POST'])
+def get_block():
+    try:
+        block = Block().deserialize(request.form['block'])
+        self.blocks_to_verify.append(block)
+        self.new_block += 1
+        logging.debug("Got block " + request.form['block'])
+    except:
+        logging.warn("Bad Request, no block found")
 
-    # eventually will be used to share transactions
-    @app.route('/send_transaction', methods=['POST'])
-    def get_transaction():
+# eventually will be used to share transactions
+@app.route('/send_transaction', methods=['POST'])
+def get_transaction(self):
         try:
             transaction = Transaction().deserialize(request.form['transaction'])
             self.transactions_to_verify.append(transaction)
@@ -81,6 +82,7 @@ class Server:
         return str(len(self.blockchain))
 
 
+@app.route('/get_ilp_solution', methods=['GET'])
 
 
 
