@@ -1,11 +1,20 @@
+from typing import Optional
 import unittest
 import random
 import pytest
 from ilpcoin.common.blockchain import Transaction, Block, Blockchain
-import mip
 from ilpcoin.common.ilp import *
+from ilpcoin.common.sample_ilps.knapsack import *
+
+ILP: Optional[Ilp] = knapsack()
+ILP_solution: Optional[IlpSolution] = None
 
 class SerializationTests(unittest.TestCase):
+
+    @classmethod
+    def setup_class(cls):
+        global ILP_solution
+        ILP_solution = ILP.solve()
 
     def test_transaction_deserialize(self):
         # setup
@@ -18,8 +27,8 @@ class SerializationTests(unittest.TestCase):
         # setup
         t = Transaction(sender='lavanya', receiver='jordan', amount=5)
 
-        b1 = Block(transactions=[t], prev_hash = '', nonce=0)
-        b2 = Block().deserialize(b1.serialize())
+        b1 = Block(transactions=[t], prev_hash = '', nonce=0, ILP=0, ILP_solution=ILP_solution)
+        b2 = Block.deserialize(b1.serialize())
 
         self.assertEqual(b1, b2)
 
@@ -27,7 +36,7 @@ class SerializationTests(unittest.TestCase):
 
         # setup
         t = Transaction(sender='lavanya', receiver='jordan', amount=5)
-        block = Block(transactions=[t], prev_hash = '', nonce=0)
+        block = Block(transactions=[t], prev_hash = '', nonce=0, ILP=0, ILP_solution=ILP_solution)
 
         chain1 = Blockchain([block])
         chain2 = Blockchain.deserialize(chain1.serialize())
@@ -36,14 +45,15 @@ class SerializationTests(unittest.TestCase):
 class BlockchainTests(unittest.TestCase):
 
     def setup(self):
-        self.previous = Block(transactions=[], prev_hash='', nonce=0)
+        self.previous = Block(transactions=[], prev_hash='', nonce=0, ILP=0, ILP_solution=ILP_solution)
         self.hardness = 1
 
-        self.b = Block(transactions=[], prev_hash = self.previous.hash(), nonce=41)
+        self.b = Block(transactions=[], prev_hash = self.previous.hash(), nonce=41, ILP=0, ILP_solution=ILP_solution)
 
         # find a good nonce
         while not self.b.validate_nonce(self.hardness):
             self.b.nonce = random.randint(1, 1000)
+        print(self.b.nonce)
 
     def test_validate_nonce(self):
         self.setup()
@@ -74,7 +84,7 @@ class BlockchainTests(unittest.TestCase):
         t3 = Transaction(sender="lav", receiver="luke", amount=1)
         t4 = Transaction(sender="lav", receiver="luke", amount=10)
 
-        b = Blockchain(blocks=[Block(transactions=[t0, t1, t2, t3, t4])])
+        b = Blockchain(blocks=[Block(transactions=[t0, t1, t2, t3, t4], ILP=0, ILP_solution=ILP_solution)])
 
         # ignoring t4
         self.assertTrue(b.verify_transaction(t3, 2, 3))

@@ -17,7 +17,6 @@ class Transaction:
         self.sender = sender
         self.receiver = receiver
         self.amount = amount
-        return self 
 
     def __eq__(self, other:'Transaction'):
         check = self.sender == other.sender
@@ -61,7 +60,7 @@ class Block:
             check &= t1 == t2
         check &= self.prev_hash == other.prev_hash
         check &= self.ILP == other.ILP
-        check &= self.ILP_solution== other.ILP_solution
+        check &= self.ILP_solution.variable_results == other.ILP_solution.variable_results
         check &= self.nonce == other.nonce
         return check
 
@@ -94,8 +93,9 @@ class Block:
         # check that it's the right ILP
         # check solution correctness
 
-        check &= self.transactions[0].sender == self.transactions[0].receiver
-        check &= self.transactions[0].amount == REWARD 
+        if self.transactions != []:
+            check &= self.transactions[0].sender == self.transactions[0].receiver
+            check &= self.transactions[0].amount == REWARD 
 
         return check
     
