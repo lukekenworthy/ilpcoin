@@ -17,7 +17,7 @@ VERIFIERS_REQUIRED = 3
 class IlpQueue:
     def __init__(self):
         self.q = queue.Queue() # the queue 
-        self.top : Ilp = None  # the top ilp, currently worked on by miners
+        self.top : Optional[Ilp] = None  # the top ilp, currently worked on by miners
         self.count : int = 0   # the number of verifiers who have provided solutions for self.top
         self.ilp_history : dict[int, Ilp] = {} # a dictionary mapping all previous ilp IDs to their ilp problems. 
         self.soln_history : dict[int, IlpSolution] = {} #  a dictionary mapping all previous solved ilp IDs to their solutions. Right now, this is never updated
@@ -31,29 +31,29 @@ class IlpQueue:
 
     # Add an Ilp (see ilp.py for representation) to the back of the queue
     def add(self, ilp : Ilp) -> int:
-        last_used_uid += 1
-        ilp.set_id(last_used_uid)
+        self.last_used_uid += 1
+        ilp.set_id(self.last_used_uid)
         self.q.put(ilp)
         self.ilp_history[ilp.get_id()] = ilp
         return ilp.get_id()
 
     # Return the current ilp to work on
-    def get_top(self) -> Ilp:
+    def get_top(self) -> Optional[Ilp]:
         return self.top
 
     # ToDo
-    def lookup_ilp(self, id : int) -> Ilp:
+    def lookup_ilp(self, id : int) -> Optional[Ilp]:
         # do we want to query a verifier here?
         try:
-            return ilp_history[id]
+            return self.ilp_history[id]
         except:
             return None
 
-    def lookup_solution(self, id : int)  -> IlpSolution:
+    def lookup_solution(self, id : int)  -> Optional[IlpSolution]:
         # do we want to query a verifier here?
         # how do we get these, anyway?
         try:
-            return soln_history[id]
+            return self.soln_history[id]
         except:
             return None
 
@@ -70,7 +70,7 @@ class IlpQueue:
         if not self.get_top():
             return False
 
-        if (self.get_top().getId() != uid):
+        if (self.get_top().get_id() != uid):
             return False
 
         self.count += 1
@@ -85,7 +85,7 @@ app = Flask(__name__)
 
 # Will return the new UID
 @app.route('/add_ilp', methods=['POST'])
-def add_ilp(new_ilp):
+def add_ilp():
     new_ilp_serialized = request.form.get('ilp')
     new_ilp = Ilp.deserialize(new_ilp_serialized)
     ilp_queue.add(new_ilp)
@@ -109,13 +109,18 @@ def get_solution_by_id(uid):
 
 @app.route('/verify_ilp/<uid>', methods=['GET'])
 def verify_ilp(uid):
-    return str(ilp_queue.incr_count())
+    return "true" if ilp_queue.incr_count(uid) else "False"
+
+@app.route('/register_verifier/<uid>', methods=['GET'])
+def register_verifier(uid): 
+    pass
+    # oh hallo I am a new verifier todo 
 
 @app.route('/get_neighbors/<n>', methods=['GET'])
 def get_neighbors(n):
     pass
     # todo
-
+    # queue can yeet off verifiers that it hasn't heard from 
 
 # @param VERIFIERS_REQUIRED
 
