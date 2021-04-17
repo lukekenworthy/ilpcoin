@@ -89,7 +89,6 @@ class Block:
     # both miners and verifiers should use this method to validate blocks
     def validate_block(self, previous: Optional['Block'], hardness: int) -> bool:
 
-        logging.debug("verifying block")
         check: bool = self.validate_nonce(hardness)
 
         # check that the previous_hash is correct
@@ -106,10 +105,8 @@ class Block:
             else:
                 full_ILP = Ilp.deserialize_s(r.text)
                 if self.ILP_solution:
-                    logging.debug(f"is ilp correct? {full_ILP.check(self.ILP_solution)}")
                     check &= full_ILP.check(self.ILP_solution)
         if self.transactions != []:
-            logging.debug(f"check before transactions {check}")
             check &= self.transactions[0].sender == self.transactions[0].receiver
             check &= self.transactions[0].amount == REWARD 
 
