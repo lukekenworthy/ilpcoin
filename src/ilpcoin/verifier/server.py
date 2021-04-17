@@ -9,8 +9,6 @@ import logging
 from ilpcoin.common.constants import *
 import ilpcoin.verifier.__main__ as main
 
-app = Flask(__name__)
-
 class Server:
 
     def __init__(self, id: int, b: Optional[Blockchain], host: str="localhost",

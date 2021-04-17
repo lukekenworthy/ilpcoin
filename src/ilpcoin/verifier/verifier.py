@@ -58,9 +58,7 @@ class Verifier(Server):
     
     # advertise a found block to neighbors
     def advertise_block(self, b: Block):
-        headers = {
-        "Content-Type":"application/binary",
-        }
+        headers = {"Content-Type":"application/binary",}
         if self.testing:
             for i in self.neighbors:
                 url = "http://" + HOST + ":" + str(PORT + i) + "/send_block"
@@ -110,6 +108,3 @@ class Verifier(Server):
                 sleep(0.1)
 
 
-
-# TODO
-# implement verifier registration
