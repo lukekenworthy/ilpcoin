@@ -1,3 +1,5 @@
+# example inspired by https://docs.python-mip.com/en/latest/examples.html
+
 from itertools import product
 from sys import stdout as out
 from mip import Model, xsum, minimize, BINARY
