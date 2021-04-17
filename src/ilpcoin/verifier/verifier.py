@@ -105,6 +105,8 @@ class Verifier(Server):
         # add this block on the queue of stuff to be advertised
         if response == SUCCESS:
             self.block_queue.append(b)
+            # tell the queue that we verified a solution
+            r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/" + 'verify_ilp/' + str(b.ILP))
         
         return response
     
