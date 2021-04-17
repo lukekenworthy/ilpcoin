@@ -19,21 +19,25 @@ class Verifier(Server):
         self.get_neighbors(id)
         b = self.get_blockchain()
 
-        # eventually we may want to allow for dishonest neighbors
-
         super().__init__(id, self.get_blockchain(), host, port, testing)
         self.start()
+
+        # verifiers after the first should not have empty chains
+        while self.id != 1 and self.blockchain.get_len() == 0:
+            sleep(1)
+            self.blockchain = self.get_blockchain()
 
         r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/register_verifier/" + str(self.id))
 
         self.block_queue: List[Block] = []
 
-        # genesis block
-        ilp = knapsack()
-        b = Block([], '', 0, ilp.get_id(), ilp.solve())
-        while not b.validate_nonce(HARDNESS):
-            b.nonce = random.randrange(0, 1000000)
-        self.blockchain.add_block(b)
+        # genesis block -> only the first verifier should make this
+        if self.id == 1:
+            ilp = knapsack()
+            b = Block([], '', 0, ilp.get_id(), ilp.solve())
+            while not b.validate_nonce(HARDNESS):
+                b.nonce = random.randrange(0, 1000000)
+            self.blockchain.add_block(b)
 
     
     # get neighbors from queue when initializing 

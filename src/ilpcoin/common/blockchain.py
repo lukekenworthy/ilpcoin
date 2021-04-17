@@ -25,7 +25,7 @@ class Transaction:
         check &= self.receiver == other.receiver
         check &= self.amount == other.amount
         return check
-    
+        
     def hash(self) -> str:
         to_hash = bytes(self.sender+self.receiver+str(self.amount), 'utf-8')
         return hashlib.sha256(to_hash).hexdigest()
@@ -57,6 +57,8 @@ class Block:
         self.nonce: int = nonce
         self.testing = testing
     
+        prev_hash, nonce, ILP, ILP_solution
+
     def __eq__(self, other: 'Block'):
         check: bool = True
         for (t1, t2) in zip(self.transactions, other.transactions):
