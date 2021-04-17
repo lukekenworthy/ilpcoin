@@ -1,11 +1,13 @@
 #!usr/bin/env python3
 
 from ilpcoin.common.blockchain import Block, Transaction
+from ilpcoin.common.constants import PORT, QUEUE_HOST, QUEUE_PORT, HOST
 from ilpcoin.common.ilp import Ilp, IlpSolution
 import requests
 import random
 from typing import List, Optional
 import uuid
+import pickle
 
 class InvalidResponseError(Exception):
     pass
@@ -36,26 +38,27 @@ class ClientPeer:
     """
 
     def get_n_neighbors(self, n:int) -> List[str]:
-        url = f"{self.host}:{self.port}/get_neighbors/{n}"
+        url = f"http://{QUEUE_HOST}:{QUEUE_PORT}/get_neighbors/{n}"
         r = requests.get(url)
         if r.status_code != 200:
             raise InvalidResponseError("No neighbors found.")
-        neighbors = r.json()
-        return neighbors["neighbors"]
+        neighbors = pickle.loads(r.content)
+        return neighbors
 
 
 
 
     def start_mine(self):
         while True:
-            r = requests.get(f"{self.host}:{self.port}/get_top_ilp")
+            r = requests.get(f"http://{QUEUE_HOST}:{QUEUE_PORT}/get_top_ilp")
             ilp_text = r.text
-            ilp = Ilp.deserialize(ilp_text.encode("ascii")) 
-
+            ilp = Ilp.deserialize_s(ilp_text) 
             neighbors_valid = False
+            neighbor_port = None
             while not neighbors_valid:
                 neighbor = random.choice(self.neighbors)
-                url = f"{self.host}:{neighbor}/get_previous"
+                neighbor_port = PORT + int(neighbor)
+                url = f"http://{HOST}:{neighbor_port}/get_previous"
                 r = requests.get(url)
                 if r.status_code == 200:
                     neighbors_valid = True
@@ -82,7 +85,7 @@ class ClientPeer:
                 if new_block.validate_nonce(10):
                     break
 
-            url = f"{self.host}:{self.port}/send_block"
+            url = f"http://{HOST}:{neighbor_port}/send_block"
             payload = {
                 "block": new_block.serialize()
             }
