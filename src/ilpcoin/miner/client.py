@@ -62,7 +62,7 @@ class ClientPeer:
 
             previous_block_text = r.content
             prev_block: Block = Block().deserialize(previous_block_text)
-            prev_ilp_id = prev_block.ilp.uid
+            prev_ilp_id = prev_block.ILP
             top_ilp_id = ilp.uid
             if prev_ilp_id == top_ilp_id - 1:
                 continue
