@@ -2,6 +2,7 @@ from typing import List, Set
 from flask import Flask, request
 import requests
 from ilpcoin.common.ilp import *
+from ilpcoin.common.constants import *
 import queue
 import logging
 import threading
@@ -100,7 +101,7 @@ app = Flask(__name__)
 def add_ilp():
     new_ilp_serialized = request.form.get('ilp')
     if not new_ilp_serialized:
-        return ERROR_FAILURE
+        return FAILURE
     new_ilp = Ilp.deserialize(new_ilp_serialized)
     ilp_queue.add(new_ilp)
     return str(new_ilp.get_id())
@@ -108,12 +109,12 @@ def add_ilp():
 @app.route('/get_top_ilp', methods=['GET'])
 def get_top_ilp():
     result = ilp_queue.get_top()
-    return result.serialize() if result else ""
+    return result.serialize() if result else ILP_NOT_FOUND
 
 @app.route('/get_ilp_by_id/<uid>', methods=['GET'])
 def get_ilp_by_id(uid):
     result = ilp_queue.lookup_ilp(uid)
-    return result.serialize() if result else ""
+    return result.serialize() if result else ILP_NOT_FOUND
 
 # will return
 @app.route('/get_solution_by_id/<uid>', methods=['GET'])
@@ -123,14 +124,14 @@ def get_solution_by_id(uid):
 
 @app.route('/verify_ilp/<uid>', methods=['GET'])
 def verify_ilp(uid):
-    return "True" if ilp_queue.incr_count(uid) else "False"
+    return SUCCESS if ilp_queue.incr_count(uid) else NOT_TOP_ILP
 
 # add a verifier to the list
 @app.route('/register_verifier/<address>', methods=['GET'])
 def register_verifier(address): 
     if not address in ilp_queue.verifiers: 
         ilp_queue.add_verifer(address)
-    return str(True)
+    return SUCCESS
 
 # Return n verifier IPs, or all the verifiers if < n
 @app.route('/get_neighbors/<n>', methods=['GET'])
