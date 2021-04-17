@@ -44,6 +44,8 @@ class IlpQueue:
     
     # Return a verifier ip, different from the last time
     def get_verifier_ip(self): 
+        if not self.verifiers: 
+            return None
         self.last_used_verifier += 1
         return self.verifiers[self.last_used_verifier % len(self.verifiers)]
 
@@ -99,36 +101,40 @@ app = Flask(__name__)
 # Will return the new UID
 @app.route('/add_ilp', methods=['POST'])
 def add_ilp():
-    new_ilp_serialized = request.form.get('ilp')
+    new_ilp_serialized : str = request.form['ilp']
     if not new_ilp_serialized:
         return FAILURE
-    new_ilp = Ilp.deserialize(new_ilp_serialized)
+    new_ilp = Ilp.deserialize_s(new_ilp_serialized)
     ilp_queue.add(new_ilp)
     return str(new_ilp.get_id())
 
 @app.route('/get_top_ilp', methods=['GET'])
 def get_top_ilp():
     result = ilp_queue.get_top()
-    return result.serialize() if result else ILP_NOT_FOUND
+    return result.serialize_s() if result else ILP_NOT_FOUND
 
 @app.route('/get_ilp_by_id/<uid>', methods=['GET'])
 def get_ilp_by_id(uid):
-    result = ilp_queue.lookup_ilp(uid)
-    return result.serialize() if result else ILP_NOT_FOUND
+    print("Looking up ilp with id: " + uid)
+    result = ilp_queue.lookup_ilp(int(uid))
+    return result.serialize_s() if result else ILP_NOT_FOUND
 
 # will return
 @app.route('/get_solution_by_id/<uid>', methods=['GET'])
 def get_solution_by_id(uid, tries : int = 3):
     for i in range(tries): 
+        if not ilp_queue.get_verifier_ip(): 
+            return NO_VERIFIERS
+
         r = requests.get(ilp_queue.get_verifier_ip() + "/get_neighbors/" + str(uid), timeout=3)
         if r.content: 
             return r.content
-    return 'TIMEOUT'
+    return TIMEOUT
 
 # Announce to the queue that you have verified a solution for 
 # ilp_id
 @app.route('/verify_ilp/<ilp_id>', methods=['GET'])
-def verify_ilp(ilp_id   ):
+def verify_ilp(ilp_id):
     return SUCCESS if ilp_queue.incr_count(ilp_id) else NOT_TOP_ILP
 
 # add a verifier to the list
