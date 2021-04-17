@@ -89,7 +89,7 @@ class ClientPeer:
                 if new_block.validate_nonce(HARDNESS):
                     break
 
-            url = f"http://{HOST}:{neighbor_port}/send_block"
+            url = f"http://{HOST}:{neighbor_port}/send_block/{self.id}"
             print(f"about to post to {url}")
             '''payload = {
                 "block": new_block.serialize()

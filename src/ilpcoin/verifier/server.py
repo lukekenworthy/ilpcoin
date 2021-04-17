@@ -38,10 +38,10 @@ app = Flask(__name__)
 
 # used by miners to send a mined block and by verifiers to send a verified block
 # this block should be the top of the blockchain
-@app.route('/send_block', methods=['POST', 'PUT'])
-def get_block() -> str:
+@app.route('/send_block/<sender>', methods=['POST', 'PUT'])
+def get_block(sender) -> str:
     block: Block = Block.deserialize(request.get_data())
-    r = main.verifier.process_new_block(block)
+    r = main.verifier.process_new_block(block, int(sender))
     logging.debug(f"Processed block and responded {r}")
     return r
 
