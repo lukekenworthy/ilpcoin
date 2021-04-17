@@ -5,6 +5,8 @@ import mip
 import pickle
 import tempfile
 
+from ilpcoin.common.constants import ILP_NOT_FOUND
+
 # Class representing the solution to an Ilp. 
 class IlpSolution:
     # Create a solution from an Ilp class that has bee
@@ -27,6 +29,12 @@ class IlpSolution:
 
     def serialize(self) -> bytes:
         return pickle.dumps(self)
+    
+    def __eq__(self, other):
+        try: 
+            return self.ilp_id == other.ilp_id and self.no_solution == other.no_solution and self.variable_results == other.variable_results
+        except: 
+            return False
 
     def print_soln(self):
         # ToDo
