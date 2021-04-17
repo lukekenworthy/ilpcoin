@@ -57,7 +57,7 @@ def get_previous():
     b = main.verifier.blockchain.get_top()
     if not b:
         return EMPTY_CHAIN
-    logging.debug("Giving previous " + str(b.serialize()))
+    logging.debug("Giving previous")
     return b.serialize()
 
 # used by verifiers to check that they're on the right fork

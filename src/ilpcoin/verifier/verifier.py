@@ -7,6 +7,7 @@ from ilpcoin.common.constants import *
 import requests
 import logging
 from ilpcoin.common.sample_ilps.knapsack import *
+import random
 
 class Verifier(Server):
 
@@ -27,6 +28,14 @@ class Verifier(Server):
         r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/register_verifier/" + str(self.id))
 
         self.block_queue: List[Block] = []
+
+        # genesis block
+        ilp = knapsack()
+        b = Block([], '', 0, ilp.get_id(), ilp.solve())
+        while not b.validate_nonce(HARDNESS):
+            b.nonce = random.randrange(0, 1000000)
+        self.blockchain.add_block(b)
+
     
     # get neighbors from queue when initializing 
     def get_neighbors(self, id) -> None:

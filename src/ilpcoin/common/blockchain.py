@@ -96,11 +96,11 @@ class Block:
             check &= previous.hash() == self.prev_hash 
         
         if not self.testing:
-            r = requests.get(QUEUE_HOST + ":" + str(QUEUE_PORT) + "/" + 'get_ilp_by_id/' + str(self.ILP))
+            r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/" + 'get_ilp_by_id/' + str(self.ILP))
             if r.content == ILP_NOT_FOUND:
                 return False 
             else:
-                full_ILP = Ilp.deserialize(r.content)
+                full_ILP = Ilp.deserialize_s(r.text)
                 if self.ILP_solution:
                     check &= full_ILP.check(self.ILP_solution)
 

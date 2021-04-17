@@ -8,9 +8,6 @@ import logging
 import threading
 from random import sample
 
-# how many verifiers required to pop the top of the queue
-VERIFIERS_REQUIRED = 3
-
 # ToDo: All the database stuff
 # ToDo: Authentication
 # ToDo: Input sanitization
@@ -92,7 +89,7 @@ class IlpQueue:
             return False
 
         self.count += 1
-        if(self.count >= VERIFIERS_REQUIRED):
+        if(self.count >= VERIFIERS_NEEDED):
             self.__complete_item()
         return True
 

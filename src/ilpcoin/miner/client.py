@@ -1,13 +1,14 @@
 #!usr/bin/env python3
 
 from ilpcoin.common.blockchain import Block, Transaction
-from ilpcoin.common.constants import PORT, QUEUE_HOST, QUEUE_PORT, HOST
+from ilpcoin.common.constants import HARDNESS, PORT, QUEUE_HOST, QUEUE_PORT, HOST
 from ilpcoin.common.ilp import Ilp, IlpSolution
 import requests
 import random
 from typing import List, Optional
 import uuid
 import pickle
+from time import sleep
 
 class InvalidResponseError(Exception):
     pass
@@ -60,14 +61,17 @@ class ClientPeer:
                 neighbor_port = PORT + int(neighbor)
                 url = f"http://{HOST}:{neighbor_port}/get_previous"
                 r = requests.get(url)
+
+                print(f"get_previous status code {r.status_code}")
                 if r.status_code == 200:
                     neighbors_valid = True
+                sleep(1)
 
             previous_block_text = r.content
             prev_block: Block = Block().deserialize(previous_block_text)
             prev_ilp_id = prev_block.ILP
             top_ilp_id = ilp.uid
-            if prev_ilp_id == top_ilp_id - 1:
+            if prev_ilp_id != top_ilp_id - 1:
                 continue
 
             solved_ilp = ilp.solve()
@@ -82,14 +86,18 @@ class ClientPeer:
             mx = 2 ** 32 - 1
             while True:
                 new_block.nonce = random.randrange(mx)
-                if new_block.validate_nonce(10):
+                if new_block.validate_nonce(HARDNESS):
                     break
 
             url = f"http://{HOST}:{neighbor_port}/send_block"
-            payload = {
+            print(f"about to post to {url}")
+            '''payload = {
                 "block": new_block.serialize()
-            }
-            r = requests.post(url, payload)
+            }'''
+            headers = {"Content-Type":"application/binary",}
+            r = requests.put(url, data=new_block.serialize(),headers=headers)
+            #r = requests.post(url, payload)
+            print(f"sent a block w code {r.status_code}")
             
 
         
