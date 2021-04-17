@@ -29,7 +29,14 @@ class IlpSolution:
 
     def serialize(self) -> bytes:
         return pickle.dumps(self)
-    
+
+    def serialize_s(self) -> str:
+        return self.serialize().hex()
+
+    @classmethod
+    def deserialize_s(cls, hex_string : str):
+        return cls.deserialize(bytes.fromhex(hex_string))
+
     def __eq__(self, other):
         try: 
             return self.ilp_id == other.ilp_id and self.no_solution == other.no_solution and self.variable_results == other.variable_results
@@ -129,10 +136,21 @@ class Ilp:
     def serialize(self) -> bytes:
         return pickle.dumps(_SerializableIlp(self))
 
+    # Serialize ilp to string. 
+    # Preserves only information about the ilp problem, not any of the solving machinery 
+    # or internal solutions. 
+    def serialize_s(self) -> str:
+        return self.serialize().hex()
+
     # Deserialize an ilp from bytes. See `serialize` note about what is preserved. 
     @classmethod
     def deserialize(cls, raw_bytes : bytes) -> 'Ilp':
         return pickle.loads(raw_bytes).to_full_ilp()
+
+    # Deserialize an ilp from hex string. See `serialize` note about what is preserved. 
+    @classmethod
+    def deserialize_s(cls, hex_string : str) -> 'Ilp':
+        return cls.deserialize(bytes.fromhex(hex_string))
 
     def __eval_objective_function(self, solution):
         objective_function = self.mip_ilp.objective
