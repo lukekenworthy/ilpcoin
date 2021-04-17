@@ -1,5 +1,6 @@
 import argparse
 import requests
+from ilpcoin.common.sample_ilps.traveling_salesman import traveling_salesman
 
 def main():
     pass
