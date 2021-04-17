@@ -1,5 +1,6 @@
 #!usr/bin/env python3
 
+from typing import Optional
 import mip
 import pickle
 import tempfile
@@ -105,7 +106,7 @@ class Ilp:
 
  
     # Try to solve for up to max_time and return a solution object, described above.
-    def solve(self, max_time = 300) -> IlpSolution:
+    def solve(self, max_time = 300) -> Optional[IlpSolution]:
         status = self.mip_ilp.optimize(max_seconds = max_time)
         # Solution can be infeasible (no solution) or the actual solution. 
         if (status == mip.OptimizationStatus.INFEASIBLE or status == mip.OptimizationStatus.OPTIMAL):
@@ -142,7 +143,7 @@ class Ilp:
                 return False
 
             solution_value = self.__eval_objective_function(solution)
-            return solution_value > self.k if self.maximize else solution_value < self.k 
+            return float(solution_value) > self.k if self.maximize else solution_value < self.k 
         except: 
             # If we can't check it, it's not a solution. 
             return False
