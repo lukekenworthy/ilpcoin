@@ -91,33 +91,33 @@ class Ilp:
     def get_id(self) -> int:
         return self.uid
     
-    # DANGER: THIS DOES NOT WORK
-    def __eq__(self, other):
-        # k is the same
-        result = self.k == other.k
+    # # DANGER: THIS DOES NOT WORK
+    # def __eq__(self, other):
+    #     # k is the same
+    #     result = self.k == other.k
 
-        # same uid
-        result = result and self.uid == other.uid
-        # print("result", result)
+    #     # same uid
+    #     result = result and self.uid == other.uid
+    #     # print("result", result)
 
-        # same objectives
-        # result = result and self.mip_ilp.objective.equals(other.mip_ilp.objective)
+    #     # same objectives
+    #     # result = result and self.mip_ilp.objective.equals(other.mip_ilp.objective)
 
-        # same vars
-        result = result and (self.mip_ilp.vars == other.mip_ilp.vars)
-        # print("result", self.mip_ilp.vars[1])
+    #     # same vars
+    #     result = result and (self.mip_ilp.vars == other.mip_ilp.vars)
+    #     # print("result", self.mip_ilp.vars[1])
 
-        # same constraints
-        num_constrs = len(self.mip_ilp.constrs)
-        result = result and (num_constrs == len(other.mip_ilp.constrs))
-        # print("numconst", len(other.mip_ilp.constrs))
+    #     # same constraints
+    #     num_constrs = len(self.mip_ilp.constrs)
+    #     result = result and (num_constrs == len(other.mip_ilp.constrs))
+    #     # print("numconst", len(other.mip_ilp.constrs))
 
-        if not result: 
-            return False
+    #     if not result: 
+    #         return False
 
-        for i in range(num_constrs): 
-            result = result and (self.mip_ilp.constrs[i].expr() == other.mip_ilp.constrs[i].expr())
-        return result
+    #     for i in range(num_constrs): 
+    #         result = result and (self.mip_ilp.constrs[i].expr() == other.mip_ilp.constrs[i].expr())
+    #     return result
 
  
     # Try to solve for up to max_time and return a solution object, described above.

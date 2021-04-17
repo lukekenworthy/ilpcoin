@@ -40,6 +40,8 @@ class IlpQueue:
         ilp.set_id(self.last_used_uid)
         self.q.put(ilp)
         self.ilp_history[ilp.get_id()] = ilp
+        if not self.top: 
+            self.top = self.q.get()
         return ilp.get_id()
     
     # Return a verifier ip, different from the last time
@@ -73,6 +75,7 @@ class IlpQueue:
     #         return None
 
     def __complete_item(self) -> None:
+        print("Ilp with id " + str(self.top.get_id()) + " is popped from queue.") 
         if not self.q.empty():
             self.top = self.q.get()
         else:
