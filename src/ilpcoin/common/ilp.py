@@ -1,8 +1,11 @@
 #!usr/bin/env python3
 
+from typing import Optional
 import mip
 import pickle
 import tempfile
+
+from ilpcoin.common.constants import ILP_NOT_FOUND
 
 # Class representing the solution to an Ilp. 
 class IlpSolution:
@@ -26,6 +29,19 @@ class IlpSolution:
 
     def serialize(self) -> bytes:
         return pickle.dumps(self)
+
+    def serialize_s(self) -> str:
+        return self.serialize().hex()
+
+    @classmethod
+    def deserialize_s(cls, hex_string : str):
+        return cls.deserialize(bytes.fromhex(hex_string))
+
+    def __eq__(self, other):
+        try: 
+            return self.ilp_id == other.ilp_id and self.no_solution == other.no_solution and self.variable_results == other.variable_results
+        except: 
+            return False
 
     def print_soln(self):
         # ToDo
@@ -105,7 +121,7 @@ class Ilp:
 
  
     # Try to solve for up to max_time and return a solution object, described above.
-    def solve(self, max_time = 300) -> IlpSolution:
+    def solve(self, max_time = 300) -> Optional[IlpSolution]:
         status = self.mip_ilp.optimize(max_seconds = max_time)
         # Solution can be infeasible (no solution) or the actual solution. 
         if (status == mip.OptimizationStatus.INFEASIBLE or status == mip.OptimizationStatus.OPTIMAL):
@@ -120,10 +136,21 @@ class Ilp:
     def serialize(self) -> bytes:
         return pickle.dumps(_SerializableIlp(self))
 
+    # Serialize ilp to string. 
+    # Preserves only information about the ilp problem, not any of the solving machinery 
+    # or internal solutions. 
+    def serialize_s(self) -> str:
+        return self.serialize().hex()
+
     # Deserialize an ilp from bytes. See `serialize` note about what is preserved. 
     @classmethod
     def deserialize(cls, raw_bytes : bytes) -> 'Ilp':
         return pickle.loads(raw_bytes).to_full_ilp()
+
+    # Deserialize an ilp from hex string. See `serialize` note about what is preserved. 
+    @classmethod
+    def deserialize_s(cls, hex_string : str) -> 'Ilp':
+        return cls.deserialize(bytes.fromhex(hex_string))
 
     def __eval_objective_function(self, solution):
         objective_function = self.mip_ilp.objective
@@ -142,7 +169,7 @@ class Ilp:
                 return False
 
             solution_value = self.__eval_objective_function(solution)
-            return solution_value > self.k if self.maximize else solution_value < self.k 
+            return float(solution_value) > self.k if self.maximize else solution_value < self.k 
         except: 
             # If we can't check it, it's not a solution. 
             return False
