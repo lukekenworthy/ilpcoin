@@ -18,7 +18,7 @@ VERIFIERS_REQUIRED = 3
 # IlpQueue represents a queue of ilps. 
 # This state needs to be written to databases. 
 class IlpQueue:
-    def __init__(self, initial_verifiers : List[str] = []):
+    def __init__(self, initial_verifiers : List[int] = []):
         self.q = queue.Queue() # the queue 
         self.top : Optional[Ilp] = None  # the top ilp, currently worked on by miners
         self.count : int = 0   # the number of verifiers who have provided solutions for self.top
@@ -45,7 +45,7 @@ class IlpQueue:
         return ilp.get_id()
     
     # Return a verifier ip, different from the last time
-    def get_verifier_ip(self): 
+    def get_verifier_ip(self) -> Optional[int]: 
         if not self.verifiers: 
             return None
         self.last_used_verifier += 1
@@ -126,10 +126,11 @@ def get_ilp_by_id(uid):
 @app.route('/get_solution_by_id/<uid>', methods=['GET'])
 def get_solution_by_id(uid, tries : int = 3):
     for i in range(tries): 
-        if not ilp_queue.get_verifier_ip(): 
+        id = ilp_queue.get_verifier_ip()
+        if not id: 
             return NO_VERIFIERS
 
-        r = requests.get(ilp_queue.get_verifier_ip() + "/get_neighbors/" + str(uid), timeout=3)
+        r = requests.get((HOST + ":" + str(int(PORT) + int(id))) + "/get_neighbors/" + str(uid), timeout=3)
         if r.content: 
             return r.content
     return TIMEOUT
