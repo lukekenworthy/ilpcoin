@@ -85,7 +85,7 @@ class Verifier(Server):
             return 
         for i in self.neighbors:
             if i != sender:
-                url = "http://" + HOST + ":" + str(PORT + int(i)) + "/send_block"
+                url = f"http://{HOST}:{PORT + int(i)}/send_block/{self.id}" 
                 r = requests.put(url, data=b.serialize(),headers=headers)
                 logging.debug(f"Advertised block to {i}")
                 # maybe eventually we want to handle failed requests here -> perhaps by updating our view of the chain?
