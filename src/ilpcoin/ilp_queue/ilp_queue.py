@@ -118,13 +118,18 @@ def get_ilp_by_id(uid):
 
 # will return
 @app.route('/get_solution_by_id/<uid>', methods=['GET'])
-def get_solution_by_id(uid):
-    r = requests.get(ilp_queue.get_verifier_ip() + "/get_neighbors/" + str(uid))
-    return r.content
+def get_solution_by_id(uid, tries : int = 3):
+    for i in range(tries): 
+        r = requests.get(ilp_queue.get_verifier_ip() + "/get_neighbors/" + str(uid), timeout=3)
+        if r.content: 
+            return r.content
+    return 'TIMEOUT'
 
-@app.route('/verify_ilp/<uid>', methods=['GET'])
-def verify_ilp(uid):
-    return SUCCESS if ilp_queue.incr_count(uid) else NOT_TOP_ILP
+# Announce to the queue that you have verified a solution for 
+# ilp_id
+@app.route('/verify_ilp/<ilp_id>', methods=['GET'])
+def verify_ilp(ilp_id   ):
+    return SUCCESS if ilp_queue.incr_count(ilp_id) else NOT_TOP_ILP
 
 # add a verifier to the list
 @app.route('/register_verifier/<address>', methods=['GET'])
