@@ -12,10 +12,10 @@ class InvalidResponseError(Exception):
 
 class ClientPeer:
 
-    def __init__(self, host="localhost", port="8008") -> None:
+    def __init__(self, host="localhost", id:int=0) -> None:
         self.host = host
-        self.port = port
-        self.id = str(uuid.uuid4())
+        self.port:str = str(8000 + id)
+        self.id:str = str(id)
         self.reset_neighbors(5)
 
     def reset_neighbors(self, n) -> None:
@@ -60,7 +60,7 @@ class ClientPeer:
                 if r.status_code == 200:
                     neighbors_valid = True
 
-            previous_block_text = r.text
+            previous_block_text = r.content
             prev_block: Block = Block().deserialize(previous_block_text)
             prev_ilp_id = prev_block.ilp.uid
             top_ilp_id = ilp.uid
@@ -72,10 +72,10 @@ class ClientPeer:
                 continue
             
             prev_hash = prev_block.hash()
-            transaction = Transaction().initialize(self.id, self.id, 5)
+            transaction = Transaction(self.id, self.id, 5)
             new_block = Block([transaction], str(prev_hash))
-            new_block.ILP = ilp.serialize()
-            new_block.ILP_solution = solved_ilp.serialize()
+            new_block.ILP = ilp.get_id()
+            new_block.ILP_solution = solved_ilp
             mx = 2 ** 32 - 1
             while True:
                 new_block.nonce = random.randrange(mx)
@@ -88,7 +88,6 @@ class ClientPeer:
             }
             r = requests.post(url, payload)
             
-
 
         
 
