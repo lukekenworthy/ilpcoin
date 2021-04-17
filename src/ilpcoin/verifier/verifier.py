@@ -24,18 +24,19 @@ class Verifier(Server):
         super().__init__(id, self.get_blockchain(), host, port, testing)
         self.start()
 
-        # TODO register with the queue
+        r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/register_verifier/" + str(self.id))
 
         self.block_queue: List[Block] = []
     
     # get neighbors from queue when initializing 
     def get_neighbors(self, id) -> None:
         if not self.testing:
-            r = requests.get(QUEUE_HOST + ":" + str(QUEUE_PORT) + "/get_neighbors")
+            r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/get_neighbors/5")
             self.neighbors = pickle.loads(r.content)
+            if id in self.neighbors:
+                self.neighbors.remove(id)
         else:
             self.neighbors: List[int] = [1, 2]
-            self.neighbors.remove(id)
 
     # get blockchain from neighbors when starting up
     def get_blockchain(self) -> Optional[Blockchain]:
