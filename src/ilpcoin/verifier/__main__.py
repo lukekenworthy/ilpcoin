@@ -14,7 +14,7 @@ def main():
     parser.add_argument("-port", help="Server port number", type=int, default='8000')
     args = parser.parse_args()
 
-    logging.basicConfig(filename='logs/verifier.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+    #logging.basicConfig(filename='logs/verifier' + str(args.id) + '.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
     logging.basicConfig(level=logging.DEBUG)
 
     global verifier
@@ -22,4 +22,5 @@ def main():
     verifier.run()
 
 if __name__ == '__main__':
+    logging.debug("hkldhfksdah")
     main()

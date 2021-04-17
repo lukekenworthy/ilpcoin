@@ -26,7 +26,7 @@ class Server:
         self.blocks_to_verify = []
         self.new_block: int = 0
 
-        logging.debug("Initializing server host {host} port {self.port} id {self.id} testing {self.testing}")
+        logging.debug(f"Initializing server host {host} port {self.port} id {self.id} testing {self.testing}")
 
     # should be used by the verifier to reset a blockchain if necessary
     def set_blockchain(self, b:Blockchain):
@@ -40,11 +40,11 @@ app = Flask(__name__)
 
 # used by miners to send a mined block and by verifiers to send a verified block
 # this block should be the top of the blockchain
-@app.route('/send_block', methods=['POST'])
+@app.route('/send_block', methods=['POST', 'PUT'])
 def get_block():
-    block: Block = Block.deserialize(request.form['block'])
+    block: Block = Block.deserialize(request.get_data())
     r = main.verifier.process_new_block(block)
-    logging.debug("Processed block and responded {r}")
+    logging.debug(f"Processed block and responded {r}")
     return r
 
 # used for initialization

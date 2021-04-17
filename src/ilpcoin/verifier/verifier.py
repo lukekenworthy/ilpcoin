@@ -6,6 +6,7 @@ from ilpcoin.common.blockchain import *
 from ilpcoin.common.constants import *
 import requests
 import logging
+from ilpcoin.common.sample_ilps.knapsack import *
 
 class Verifier(Server):
 
@@ -33,7 +34,7 @@ class Verifier(Server):
             r = requests.get(QUEUE_HOST + ":" + str(QUEUE_PORT) + "/get_neighbors")
             self.neighbors = pickle.loads(r.content)
         else:
-            self.neighbors: List[int] = [1, 2, 3]
+            self.neighbors: List[int] = [1, 2]
             self.neighbors.remove(id)
 
     # get blockchain from neighbors when starting up
@@ -57,10 +58,14 @@ class Verifier(Server):
     
     # advertise a found block to neighbors
     def advertise_block(self, b: Block):
-        params = {'text': b.serialize()}
-        if not self.testing:
+        headers = {
+        "Content-Type":"application/binary",
+        }
+        if self.testing:
             for i in self.neighbors:
-                r = requests.post(HOST + ":" + str(PORT + i) + "/send_block", data=params)
+                url = "http://" + HOST + ":" + str(PORT + i) + "/send_block"
+                r = requests.put(url, data=b.serialize(),headers=headers)
+                logging.debug(f"Advertised block to {i}")
                 # maybe eventually we want to handle failed requests here -> perhaps by updating our view of the chain?
 
     # verify a block
@@ -97,7 +102,7 @@ class Verifier(Server):
 
         while True:
             if self.block_queue != []:
-                logging.debug("Found block {counter}")
+                logging.debug(f"Found block {counter}")
                 self.advertise_block(self.block_queue[0])
                 self.block_queue.pop(0)
                 counter += 1

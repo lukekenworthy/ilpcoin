@@ -5,6 +5,7 @@ from typing import List, Optional
 from ilpcoin.common.ilp import *
 from ilpcoin.common.constants import *
 import requests
+import logging
 
 class BadTransactionError(Exception):
     pass
@@ -139,10 +140,10 @@ class Blockchain:
         return pickle.loads(data)
     
     def get_top(self) -> Optional[Block]:
-        if self.blockchain != []:
+        if self.blockchain == []:
             return None
         else:
-            return self.blockchain[-1]
+            return self.blockchain[len(self.blockchain) - 1]
     
     def add_block(self, block: Block):
         self.blockchain.append(block)
