@@ -62,7 +62,7 @@ def get_previous():
 
 # used by verifiers to check that they're on the right fork
 @app.route('/get_length', methods=['GET'])
-def get_length(self):
+def get_length():
     logging.debug("Giving length " + str(main.verifier.blockchain.get_len()))
     return str(main.verifier.blockchain.get_len())
 

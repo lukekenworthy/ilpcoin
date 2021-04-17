@@ -9,7 +9,7 @@ verifier: Optional[Verifier] = None
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-id", help="Node Id", type=int, default=0)
-    parser.add_argument("-t", help=("Optional testing flag"), default=True)
+    parser.add_argument("-t", help=("Optional testing flag"), default=False)
     parser.add_argument("-host", help="Server hostname", type=str, default='localhost')
     parser.add_argument("-port", help="Server port number", type=int, default='8000')
     args = parser.parse_args()

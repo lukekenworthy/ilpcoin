@@ -127,7 +127,7 @@ def get_solution_by_id(uid, tries : int = 3):
         if not id: 
             return NO_VERIFIERS
 
-        r = requests.get((HOST + ":" + str(int(PORT) + int(id))) + "/get_ilp_solution/" + str(uid), timeout=3)
+        r = requests.get("http://" + (HOST + ":" + str(int(PORT) + int(id))) + "/get_ilp_solution/" + str(uid), timeout=3)
         if r.content: 
             return r.content
     return TIMEOUT

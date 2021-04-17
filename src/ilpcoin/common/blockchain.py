@@ -97,7 +97,8 @@ class Block:
         
         if not self.testing:
             r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/" + 'get_ilp_by_id/' + str(self.ILP))
-            if r.content == ILP_NOT_FOUND:
+            logging.debug(r.text)
+            if r.text == ILP_NOT_FOUND:
                 return False 
             else:
                 full_ILP = Ilp.deserialize_s(r.text)

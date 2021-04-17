@@ -20,7 +20,6 @@ class Verifier(Server):
         b = self.get_blockchain()
 
         # eventually we may want to allow for dishonest neighbors
-        assert(b.verify_blockchain())
 
         super().__init__(id, self.get_blockchain(), host, port, testing)
         self.start()
@@ -42,8 +41,10 @@ class Verifier(Server):
         if not self.testing:
             r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/get_neighbors/5")
             self.neighbors = pickle.loads(r.content)
+            self.neighbors = [int(el) for el in self.neighbors]
             if id in self.neighbors:
                 self.neighbors.remove(id)
+            print(self.neighbors)
         else:
             self.neighbors: List[int] = [1, 2]
 
@@ -55,23 +56,26 @@ class Verifier(Server):
 
             # figure out who has the longest fork
             for i in self.neighbors:
-                r = requests.get(HOST + ":" + str(PORT + i) + "/get_length")
+                r = requests.get("http://" + HOST + ":" + str(PORT + int(i)) + "/get_length")
                 if int(r.content) > longest_chain:
                     longest_chain = int(r.content)
                     longest_neighbor = i
             
             # grab their chain
-            r = requests.get(HOST + ":" + str(PORT + longest_neighbor) + "/get_blockchain")
-            return Blockchain.deserialize(r.content)
+            if longest_neighbor == 0:
+                return Blockchain([])
+            else:
+                r = requests.get("http://" + HOST + ":" + str(PORT + longest_neighbor) + "/get_blockchain")
+                return Blockchain.deserialize(r.content)
         else:
             return Blockchain(blocks=[])
     
     # advertise a found block to neighbors
     def advertise_block(self, b: Block):
         headers = {"Content-Type":"application/binary",}
-        if self.testing:
+        if not self.testing:
             for i in self.neighbors:
-                url = "http://" + HOST + ":" + str(PORT + i) + "/send_block"
+                url = "http://" + HOST + ":" + str(PORT + int(i)) + "/send_block"
                 r = requests.put(url, data=b.serialize(),headers=headers)
                 logging.debug(f"Advertised block to {i}")
                 # maybe eventually we want to handle failed requests here -> perhaps by updating our view of the chain?
@@ -93,6 +97,8 @@ class Verifier(Server):
                 break
         
         # validate static components - nonce, previous_hash, proof of work
+        if not self.blockchain.get_top():
+            logging.debug("top of the chain is None")
         if not b.validate_block(self.blockchain.get_top(), HARDNESS):
             response = INVALID_NONCE_OR_POW
         
