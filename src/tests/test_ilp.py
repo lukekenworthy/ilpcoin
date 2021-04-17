@@ -64,17 +64,3 @@ class TsmTests(unittest.TestCase):
 
 
 
-# def test_ilp_serialize():
-#     knapsack_model = knapsack()
-#     print(knapsack_model)
-#     reconstructed = Ilp.deserialize(knapsack_model.serialize())
-#     print("Reconstructed:" + str(reconstructed.mip_ilp.objective))
-#     print("Orig:" + str(knapsack_model.mip_ilp.objective))
-
-#     print("Reconstructed:" + str(reconstructed.mip_ilp.vars[3]))
-#     print("Orig:" + str(knapsack_model.mip_ilp.vars[3]))
-
-#     self.assertTrue(knapsack_model == reconstructed)
-
-
-
