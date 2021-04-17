@@ -1,14 +1,17 @@
 #!usr/bin/env python3
 
-from flask import Flask
+from pickle import bytes_types
+from typing import Optional
+from flask import Flask, request
 from ilpcoin.common.blockchain import Block, Blockchain, Transaction
 import threading
-
-app = Flask(__name__)
+import logging
+from ilpcoin.common.constants import *
+import ilpcoin.verifier.__main__ as main
 
 class Server:
 
-    def __init__(self, id: int, b: Blockchain, host: str="localhost",
+    def __init__(self, id: int, b: Optional[Blockchain], host: str="localhost",
         port: int=8000, testing: bool=False):
         self.id: int = id
         self.host: str = host
@@ -17,61 +20,64 @@ class Server:
 
         self.blockchain = b
 
-        # collection of unverified transactions
-        self.transactions_to_verify: list = []
-        self.new_transaction: int = 0
-
         # collection of unverified blocks
         self.blocks_to_verify = []
         self.new_block: int = 0
+
+        logging.debug(f"Initializing server host {host} port {self.port} id {self.id} testing {self.testing}")
 
     # should be used by the verifier to reset a blockchain if necessary
     def set_blockchain(self, b:Blockchain):
         self.blockchain = b
 
     def start(self):
-        if not self.testing:
-            threading.Thread(target=app.run, kwargs={"debug":False, "host":self.host, "port":self.port}).start()
+        logging.debug("Starting server")
+        threading.Thread(target=app.run, kwargs={"debug":False, "host":self.host, "port":self.port, "threaded":True}).start()
 
-    # used by miners to send a mined block and by verifiers to send a verified block
-    @app.route('/send_block', methods=['POST'])
-    def get_block():
-        try:
-            block = Block()
-            block.deserialize(request.form['block'])
-            self.blocks_to_verify.append(block)
-            self.new_block += 1
-        except:
-            print("Bad Request, no block found")
+app = Flask(__name__)
 
-    # eventually will be used to share transactions
-    @app.route('/send_transaction', methods=['POST'])
-    def get_transaction():
-        try:
-            transaction = Transaction()
-            transaction.deserialize(request.form['transaction'])
-            self.transactions_to_verify.append(transaction)
-            self.new_transaction += 1
-        except:
-            print("Bad Request, no transaction found")
+# used by miners to send a mined block and by verifiers to send a verified block
+# this block should be the top of the blockchain
+@app.route('/send_block', methods=['POST', 'PUT'])
+def get_block():
+    block: Block = Block.deserialize(request.get_data())
+    r = main.verifier.process_new_block(block)
+    logging.debug(f"Processed block and responded {r}")
+    return r
 
-    # used for initialization
-    @app.route('/get_blockchain', methods=['GET'])
-    def give_blockchain(self):
-        return self.blockchain.serialize()
+# used for initialization
+@app.route('/get_blockchain', methods=['GET'])
+def give_blockchain():
+    logging.debug("Giving blockchain " + str(main.verifier.blockchain.serialize()))
+    return main.verifier.blockchain.serialize()
 
-    # used by miners to get the previous block
-    @app.route('/get_previous', methods=['GET'])
-    def get_previous(self):
-        return self.blockchain.get_top().serialize()
+# used by miners to get the previous block
+@app.route('/get_previous', methods=['GET'])
+def get_previous():
+    b = main.verifier.blockchain.get_top()
+    if not b:
+        return EMPTY_CHAIN
+    logging.debug("Giving previous " + str(b.serialize()))
+    return b.serialize()
 
-    # used by verifiers to check that they're on the right fork
-    @app.route('/get_length', methods=['GET'])
-    def get_length(self):
-        return str(len(self.blockchain))
+# used by verifiers to check that they're on the right fork
+@app.route('/get_length', methods=['GET'])
+def get_length(self):
+    logging.debug("Giving length " + str(main.verifier.blockchain.get_len()))
+    return str(main.verifier.blockchain.get_len())
 
+@app.route('/get_value_by_user/<username>', methods=['GET'])
+def get_value_by_user(username):
+    l = main.verifier.blockchain.get_len()
+    return str(main.verifier.blockchain.get_value_by_user(username, l, BLOCKSIZE))
 
-
+@app.route('/get_ilp_solution/<id>', methods=['GET'])
+def get_ilp_solution(id):
+    l = main.verifier.blockchain.get_solution_by_id(id)
+    if l: 
+        return l.serialize() 
+    else: 
+        return ILP_NOT_FOUND 
 
 
 

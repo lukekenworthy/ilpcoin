@@ -1,19 +1,26 @@
 import argparse
-from ilpcoin.verifier.verifier import *
+from typing import Optional
+from ilpcoin.verifier.verifier import Verifier
+from ilpcoin.common.constants import *
+import logging
+
+verifier: Optional[Verifier] = None
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-id", help="Node Id", type=int, default=0)
-    parser.add_argument("-t", help=("Optional testing flag"), default=False)
+    parser.add_argument("-t", help=("Optional testing flag"), default=True)
     parser.add_argument("-host", help="Server hostname", type=str, default='localhost')
     parser.add_argument("-port", help="Server port number", type=int, default='8000')
     args = parser.parse_args()
 
-    HOST = args.host
-    PORT = int(args.port)
+    #logging.basicConfig(filename='logs/verifier' + str(args.id) + '.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+    logging.basicConfig(level=logging.DEBUG)
 
-    verifier = Verifier(id)
+    global verifier
+    verifier = Verifier(id=args.id, host=HOST, port=PORT, testing=args.t)
     verifier.run()
 
 if __name__ == '__main__':
+    logging.debug("hkldhfksdah")
     main()

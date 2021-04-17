@@ -27,11 +27,6 @@ class IlpSolution:
     def serialize(self) -> bytes:
         return pickle.dumps(self)
 
-    def __eq__(self, other):
-        return isinstance(other, IlpSolution) and \
-               self.ilp_id == other.ilp_id  and \
-               self.variable_results == other.variable_results
-
     def print_soln(self):
         # ToDo
         pass
