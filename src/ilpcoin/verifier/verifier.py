@@ -1,5 +1,7 @@
 #!usr/bin/env python3
 
+from pickle import LIST
+from typing import Dict, Tuple
 from ilpcoin.verifier.server import Server
 from time import sleep
 from ilpcoin.common.blockchain import *
@@ -8,6 +10,8 @@ import requests
 import logging
 from ilpcoin.common.sample_ilps.knapsack import *
 import random
+
+from requests.models import StreamConsumedError
 
 class Verifier(Server):
 
@@ -19,21 +23,25 @@ class Verifier(Server):
         self.get_neighbors(id)
         b = self.get_blockchain()
 
-        # eventually we may want to allow for dishonest neighbors
-
         super().__init__(id, self.get_blockchain(), host, port, testing)
         self.start()
 
+        # verifiers after the first should not have empty chains
+        while self.id != 1 and self.blockchain.get_len() == 0:
+            sleep(1)
+            self.blockchain = self.get_blockchain()
+
         r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/register_verifier/" + str(self.id))
 
-        self.block_queue: List[Block] = []
+        self.block_queue: List[Dict] = []
 
-        # genesis block
-        ilp = knapsack()
-        b = Block([], '', 0, ilp.get_id(), ilp.solve())
-        while not b.validate_nonce(HARDNESS):
-            b.nonce = random.randrange(0, 1000000)
-        self.blockchain.add_block(b)
+        # genesis block -> only the first verifier should make this
+        if self.id == 1:
+            ilp = knapsack()
+            b = Block([], '', 0, ilp.get_id(), ilp.solve())
+            while not b.validate_nonce(HARDNESS):
+                b.nonce = random.randrange(0, 1000000)
+            self.blockchain.add_block(b)
 
     
     # get neighbors from queue when initializing 
@@ -71,17 +79,19 @@ class Verifier(Server):
             return Blockchain(blocks=[])
     
     # advertise a found block to neighbors
-    def advertise_block(self, b: Block):
+    def advertise_block(self, b: Block, sender:int):
         headers = {"Content-Type":"application/binary",}
-        if not self.testing:
-            for i in self.neighbors:
-                url = "http://" + HOST + ":" + str(PORT + int(i)) + "/send_block"
+        if self.testing:
+            return 
+        for i in self.neighbors:
+            if i != sender:
+                url = f"http://{HOST}:{PORT + int(i)}/send_block/{self.id}" 
                 r = requests.put(url, data=b.serialize(),headers=headers)
                 logging.debug(f"Advertised block to {i}")
                 # maybe eventually we want to handle failed requests here -> perhaps by updating our view of the chain?
 
     # verify a block
-    def process_new_block(self, b: Block) -> str:
+    def process_new_block(self, b: Block, sender:int) -> str:
         response = SUCCESS
 
         # validate the transactions in the block
@@ -104,7 +114,9 @@ class Verifier(Server):
         
         # add this block on the queue of stuff to be advertised
         if response == SUCCESS:
-            self.block_queue.append(b)
+            self.block_queue.append({"block":b, "sender":sender})
+            # tell the queue that we verified a solution
+            r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/" + 'verify_ilp/' + str(b.ILP))
         
         return response
     
@@ -117,7 +129,7 @@ class Verifier(Server):
         while True:
             if self.block_queue != []:
                 logging.debug(f"Found block {counter}")
-                self.advertise_block(self.block_queue[0])
+                self.advertise_block(self.block_queue[0]['block'], self.block_queue[0]['sender'])
                 self.block_queue.pop(0)
                 counter += 1
             else:

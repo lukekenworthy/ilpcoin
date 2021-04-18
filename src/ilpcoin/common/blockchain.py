@@ -25,7 +25,7 @@ class Transaction:
         check &= self.receiver == other.receiver
         check &= self.amount == other.amount
         return check
-    
+        
     def hash(self) -> str:
         to_hash = bytes(self.sender+self.receiver+str(self.amount), 'utf-8')
         return hashlib.sha256(to_hash).hexdigest()
@@ -57,6 +57,8 @@ class Block:
         self.nonce: int = nonce
         self.testing = testing
     
+        prev_hash, nonce, ILP, ILP_solution
+
     def __eq__(self, other: 'Block'):
         check: bool = True
         for (t1, t2) in zip(self.transactions, other.transactions):
@@ -94,17 +96,18 @@ class Block:
         # check that the previous_hash is correct
         if previous:
             check &= previous.hash() == self.prev_hash 
+            logging.debug(f"previous hash is correct? {check} hash is {self.prev_hash}")
+            logging.debug(f"acutal answer {previous.hash()}")
         
         if not self.testing:
             r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/" + 'get_ilp_by_id/' + str(self.ILP))
-            logging.debug(r.text)
             if r.text == ILP_NOT_FOUND:
+                logging.debug(f"ILP_NOT_FOUND id {self.ILP}")
                 return False 
             else:
                 full_ILP = Ilp.deserialize_s(r.text)
                 if self.ILP_solution:
                     check &= full_ILP.check(self.ILP_solution)
-
         if self.transactions != []:
             check &= self.transactions[0].sender == self.transactions[0].receiver
             check &= self.transactions[0].amount == REWARD 
