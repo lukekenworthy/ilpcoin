@@ -31,6 +31,7 @@ def main():
 
     print("Looking up solutions: ")
     r = requests.get(queue_url+ "/get_solution_by_id/" + str(tsm_id))
+    print("sol1: " + str(r.text))
     tsm_soln = IlpSolution.deserialize_s(r.text)
     r = requests.get(queue_url+ "/get_solution_by_id/" + str(knapsack_id))
     knapsack_soln = IlpSolution.deserialize_s(r.text)

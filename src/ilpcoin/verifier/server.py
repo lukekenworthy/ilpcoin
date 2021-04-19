@@ -75,7 +75,7 @@ def get_value_by_user(username):
 def get_ilp_solution(id):
     l = main.verifier.blockchain.get_solution_by_id(id)
     if l: 
-        return l.serialize() 
+        return l.serialize_s() 
     else: 
         return ILP_NOT_FOUND 
 

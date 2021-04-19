@@ -75,7 +75,6 @@ class _SerializableIlp:
         
 # Universal representation of a decision-problem ILP for all of ilpcoin.
 class Ilp:
-
     # Create a decision Ilp from a mip model, some k, a uid (set by the queue after instantiation, typically).
     # Set maximize to true for the ilp to be solved if objective function evaluates > k, rather than less.
     def __init__(self, mip_ilp : mip.Model, k : float, uid : int = -1, maximize = False):
@@ -90,35 +89,6 @@ class Ilp:
 
     def get_id(self) -> int:
         return self.uid
-    
-    # # DANGER: THIS DOES NOT WORK
-    # def __eq__(self, other):
-    #     # k is the same
-    #     result = self.k == other.k
-
-    #     # same uid
-    #     result = result and self.uid == other.uid
-    #     # print("result", result)
-
-    #     # same objectives
-    #     # result = result and self.mip_ilp.objective.equals(other.mip_ilp.objective)
-
-    #     # same vars
-    #     result = result and (self.mip_ilp.vars == other.mip_ilp.vars)
-    #     # print("result", self.mip_ilp.vars[1])
-
-    #     # same constraints
-    #     num_constrs = len(self.mip_ilp.constrs)
-    #     result = result and (num_constrs == len(other.mip_ilp.constrs))
-    #     # print("numconst", len(other.mip_ilp.constrs))
-
-    #     if not result: 
-    #         return False
-
-    #     for i in range(num_constrs): 
-    #         result = result and (self.mip_ilp.constrs[i].expr() == other.mip_ilp.constrs[i].expr())
-    #     return result
-
  
     # Try to solve for up to max_time and return a solution object, described above.
     def solve(self, max_time = 300) -> Optional[IlpSolution]:
