@@ -11,11 +11,11 @@ from ilpcoin.common.constants import ILP_NOT_FOUND
 class IlpSolution:
     # Create a solution from an Ilp class that has bee
     def __init__(self, solved_ilp : 'Ilp', status=mip.OptimizationStatus.OPTIMAL):
+        # Associates a solution with its ilp by ID
         self.ilp_id = solved_ilp.uid
 
         # No solution is set when the ilp has been proven to have no solution.
         self.no_solution = status == mip.OptimizationStatus.INFEASIBLE
-        # Associates a solution with its ilp by ID
         
         # The results for each variable, as a dict
         # Keys are python-mip generated variables names, and values are the value of 
@@ -59,6 +59,7 @@ class _SerializableIlp:
             self.serialized_ilp = tempOutputFile.read()
             self.uid = full_ilp.uid
             self.k = full_ilp.k
+            self.maximuze = full_ilp.maximize
             # print("Serialized: \n" + str(self.serialized_ilp)+ "\n")
 
     # convert back to a full ilp.
@@ -81,7 +82,7 @@ class Ilp:
         self.mip_ilp = mip_ilp
         self.uid = uid
         self.k = k
-        self.maximize = False
+        self.maximize = maximize
 
     # Set this Ilp's system wide UID. Normally the queue does this when it is added by a client. 
     def set_id(self, uid: int) -> None:
@@ -134,11 +135,18 @@ class Ilp:
     # Check if an IlpSolution object ssatisfies this ilp. 
     def check(self, solution : IlpSolution) -> bool:
         try: 
+            # print(f"Checking")
+            
             # The solution isn't for this ilp. 
-            if solution.ilp_id != self.uid: 
-                return False
+            # if solution.ilp_id != self.uid: 
+            #     return False
+
+            # print(f"Good ILP")
 
             solution_value = self.__eval_objective_function(solution)
+            # print(f"Objective function has value  {solution_value}")
+            # print(f"K is  {self.k}")
+            # print(f"Self.maximize is {self.maximize}")
             return float(solution_value) > self.k if self.maximize else solution_value < self.k 
         except: 
             # If we can't check it, it's not a solution. 
