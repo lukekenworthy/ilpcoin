@@ -71,13 +71,18 @@ class ClientPeer:
             prev_block: Block = Block().deserialize(previous_block_text)
             prev_ilp_id = prev_block.ILP
             top_ilp_id = ilp.uid
+            # print(f"Top ILP has ID {top_ilp_id} and prev block has id {prev_ilp_id}")
             if prev_ilp_id != top_ilp_id - 1:
                 continue
+
+            # print("Attempting solve")
 
             solved_ilp = ilp.solve()
             if solved_ilp is None:
                 continue
             
+            # print("ILP Solved")
+
             prev_hash = prev_block.hash()
             transaction = Transaction(self.id, self.id, 5)
             new_block = Block([transaction], str(prev_hash))
