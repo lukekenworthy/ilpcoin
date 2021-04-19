@@ -49,7 +49,7 @@ class Block:
         self.prev_hash: str = prev_hash
 
         # ilp id
-        self.ILP: int = 0
+        self.ILP: int = ILP
 
         # ilp solution
         self.ILP_solution: Optional[IlpSolution] = ILP_solution
@@ -180,8 +180,13 @@ class Blockchain:
     
     # get an ILP solution by id -> used by the queue to service clients 
     def get_solution_by_id(self, id:int) ->  Optional[IlpSolution]:
+        # logging.debug(f"Getting solution with id {id}")
+        # logging.debug("Printing chain")
         for b in self.blockchain:
-            if b.ILP == id:
+            # logging.debug(f"Block has id {b.ILP} and solution {b.ILP_solution}")
+            # logging.debug(f"Truth? {int(b.ILP) == int(id)}")
+            if int(b.ILP) == int(id):
+                # print(f"Returning ILP with solution b{b.ILP_solution.ilp_id}")
                 return b.ILP_solution
         return None
     

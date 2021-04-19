@@ -11,11 +11,11 @@ from ilpcoin.common.constants import ILP_NOT_FOUND
 class IlpSolution:
     # Create a solution from an Ilp class that has bee
     def __init__(self, solved_ilp : 'Ilp', status=mip.OptimizationStatus.OPTIMAL):
+        # Associates a solution with its ilp by ID
         self.ilp_id = solved_ilp.uid
 
         # No solution is set when the ilp has been proven to have no solution.
         self.no_solution = status == mip.OptimizationStatus.INFEASIBLE
-        # Associates a solution with its ilp by ID
         
         # The results for each variable, as a dict
         # Keys are python-mip generated variables names, and values are the value of 
@@ -59,6 +59,7 @@ class _SerializableIlp:
             self.serialized_ilp = tempOutputFile.read()
             self.uid = full_ilp.uid
             self.k = full_ilp.k
+            self.maximuze = full_ilp.maximize
             # print("Serialized: \n" + str(self.serialized_ilp)+ "\n")
 
     # convert back to a full ilp.
@@ -75,14 +76,13 @@ class _SerializableIlp:
         
 # Universal representation of a decision-problem ILP for all of ilpcoin.
 class Ilp:
-
     # Create a decision Ilp from a mip model, some k, a uid (set by the queue after instantiation, typically).
     # Set maximize to true for the ilp to be solved if objective function evaluates > k, rather than less.
     def __init__(self, mip_ilp : mip.Model, k : float, uid : int = -1, maximize = False):
         self.mip_ilp = mip_ilp
         self.uid = uid
         self.k = k
-        self.maximize = False
+        self.maximize = maximize
 
     # Set this Ilp's system wide UID. Normally the queue does this when it is added by a client. 
     def set_id(self, uid: int) -> None:
@@ -90,35 +90,6 @@ class Ilp:
 
     def get_id(self) -> int:
         return self.uid
-    
-    # # DANGER: THIS DOES NOT WORK
-    # def __eq__(self, other):
-    #     # k is the same
-    #     result = self.k == other.k
-
-    #     # same uid
-    #     result = result and self.uid == other.uid
-    #     # print("result", result)
-
-    #     # same objectives
-    #     # result = result and self.mip_ilp.objective.equals(other.mip_ilp.objective)
-
-    #     # same vars
-    #     result = result and (self.mip_ilp.vars == other.mip_ilp.vars)
-    #     # print("result", self.mip_ilp.vars[1])
-
-    #     # same constraints
-    #     num_constrs = len(self.mip_ilp.constrs)
-    #     result = result and (num_constrs == len(other.mip_ilp.constrs))
-    #     # print("numconst", len(other.mip_ilp.constrs))
-
-    #     if not result: 
-    #         return False
-
-    #     for i in range(num_constrs): 
-    #         result = result and (self.mip_ilp.constrs[i].expr() == other.mip_ilp.constrs[i].expr())
-    #     return result
-
  
     # Try to solve for up to max_time and return a solution object, described above.
     def solve(self, max_time = 300) -> Optional[IlpSolution]:
@@ -164,11 +135,18 @@ class Ilp:
     # Check if an IlpSolution object ssatisfies this ilp. 
     def check(self, solution : IlpSolution) -> bool:
         try: 
+            # print(f"Checking")
+            
             # The solution isn't for this ilp. 
-            if solution.ilp_id != self.uid: 
-                return False
+            # if solution.ilp_id != self.uid: 
+            #     return False
+
+            # print(f"Good ILP")
 
             solution_value = self.__eval_objective_function(solution)
+            # print(f"Objective function has value  {solution_value}")
+            # print(f"K is  {self.k}")
+            # print(f"Self.maximize is {self.maximize}")
             return float(solution_value) > self.k if self.maximize else solution_value < self.k 
         except: 
             # If we can't check it, it's not a solution. 

@@ -39,6 +39,7 @@ class IlpQueue:
         self.ilp_history[ilp.get_id()] = ilp
         if not self.top: 
             self.top = self.q.get()
+            # print(f"Top ILP has ID {self.top.get_id()}")
         return ilp.get_id()
     
     # Return a verifier ip, different from the last time
@@ -106,6 +107,8 @@ def add_ilp():
         return FAILURE
     new_ilp = Ilp.deserialize_s(new_ilp_serialized)
     ilp_queue.add(new_ilp)
+    print(f"Added new ilp with ID {new_ilp.get_id()}")
+
     return str(new_ilp.get_id())
 
 @app.route('/get_top_ilp', methods=['GET'])
@@ -126,10 +129,9 @@ def get_solution_by_id(uid, tries : int = 3):
         id = ilp_queue.get_verifier_ip()
         if not id: 
             return NO_VERIFIERS
-
         r = requests.get("http://" + (HOST + ":" + str(int(PORT) + int(id))) + "/get_ilp_solution/" + str(uid), timeout=3)
-        if r.content: 
-            return r.content
+        if r.text: 
+            return r.text
     return TIMEOUT
 
 # Announce to the queue that you have verified a solution for 
