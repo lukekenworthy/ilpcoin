@@ -38,6 +38,7 @@ class Verifier(Server):
         # genesis block -> only the first verifier should make this
         if self.id == 1:
             ilp = knapsack()
+            ilp.set_id(0)
             b = Block([], '', 0, ilp.get_id(), ilp.solve())
             while not b.validate_nonce(HARDNESS):
                 b.nonce = random.randrange(0, 1000000)
@@ -114,10 +115,11 @@ class Verifier(Server):
         
         # add this block on the queue of stuff to be advertised
         if response == SUCCESS:
+            logging.debug("Adding block.")
+            self.blockchain.add_block(b)
             self.block_queue.append({"block":b, "sender":sender})
             # tell the queue that we verified a solution
             r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/" + 'verify_ilp/' + str(b.ILP))
-        
         return response
     
     # this loop just advertises blocks in the main thread
