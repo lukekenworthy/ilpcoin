@@ -23,4 +23,4 @@ m += xsum(w[i] * x[i] for i in I) <= c
 # custom ILP class representing the decision version of
 # our problem, and a value of k = 40
 def knapsack():
-    return Ilp(m, 40)
+    return Ilp(m, 40, -1, True)
