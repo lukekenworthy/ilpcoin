@@ -15,11 +15,12 @@ class InvalidResponseError(Exception):
 
 class ClientPeer:
 
-    def __init__(self, host="localhost", id:int=0) -> None:
+    def __init__(self, host="localhost", id:int=0, buggy:bool=False) -> None:
         self.host = host
         self.port:str = str(8000 + id)
         self.id:str = str(id)
         self.reset_neighbors(5)
+        self.buggy = buggy # to be used in tests
 
     def reset_neighbors(self, n) -> None:
         self.neighbors = self.get_n_neighbors(n)
@@ -89,7 +90,7 @@ class ClientPeer:
             new_block.ILP = ilp.get_id()
             new_block.ILP_solution = solved_ilp
             mx = 2 ** 32 - 1
-            while True:
+            while True and not self.buggy:
                 new_block.nonce = random.randrange(mx)
                 if new_block.validate_nonce(HARDNESS):
                     break

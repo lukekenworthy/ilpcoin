@@ -13,7 +13,7 @@ class IntegrationTestsStandard(unittest.TestCase):
     # for 20 seconds so that subsequent tests can check the logs
     @classmethod
     def setup_class(cls):
-        threading.Thread(target=subprocess.run, args=["ilp-queue", "-verifiers", "1"], kwargs={"timeout":21}).start()
+        threading.Thread(target=subprocess.run, args=[["ilp-queue", "-verifiers", "1"]], kwargs={"timeout":21}).start()
         threading.Thread(target=subprocess.run, args=["sample_customer"], kwargs={"timeout":15}).start()
         time.sleep(1)
         threading.Thread(target=subprocess.run, args=[["verifier", "-id", "1"]], kwargs={"timeout":15}).start()
@@ -100,7 +100,7 @@ class IntegrationTestsBuggyMiner(unittest.TestCase):
     # for 30 seconds so that subsequent tests can check the logs
     @classmethod
     def setup_class(cls):
-        threading.Thread(target=subprocess.run, args=["ilp-queue", "-verifiers", "1"], kwargs={"timeout":30}).start()
+        threading.Thread(target=subprocess.run, args=[["ilp-queue", "-verifiers", "1"]], kwargs={"timeout":30}).start()
         threading.Thread(target=subprocess.run, args=["sample_customer"], kwargs={"timeout":10}).start()
         threading.Thread(target=subprocess.run, args=[["verifier", "-id", "1"]], kwargs={"timeout":20}).start()
         time.sleep(1)
