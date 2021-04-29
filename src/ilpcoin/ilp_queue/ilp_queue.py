@@ -3,6 +3,7 @@ from flask import Flask, request
 import requests
 from ilpcoin.common.ilp import *
 from ilpcoin.common.constants import *
+import ilpcoin.common.constants
 import queue
 import logging
 import threading
@@ -39,7 +40,7 @@ class IlpQueue:
         self.ilp_history[ilp.get_id()] = ilp
         if not self.top: 
             self.top = self.q.get()
-            # print(f"Top ILP has ID {self.top.get_id()}")
+            logging.debug(f"Top ILP has ID {self.top.get_id()}")
         return ilp.get_id()
     
     # Return a verifier ip, different from the last time
@@ -73,7 +74,7 @@ class IlpQueue:
     #         return None
 
     def __complete_item(self) -> None:
-        print("Ilp with id " + str(self.top.get_id()) + " is popped from queue.") 
+        logging.debug("Ilp with id " + str(self.top.get_id()) + " is popped from queue.") 
         if not self.q.empty():
             self.top = self.q.get()
         else:
@@ -86,12 +87,14 @@ class IlpQueue:
         if not self.get_top():
             return False
 
-        if (self.get_top().get_id() != uid):
+        if (self.get_top().get_id() != int(uid)):
+            logging.debug(f"Verifying ILP w ID {uid} but top of the queue is {self.get_top().get_id()}")
             return False
 
         self.count += 1
-        if(self.count >= VERIFIERS_NEEDED):
+        if(self.count >= ilpcoin.common.constants.VERIFIERS_NEEDED):
             self.__complete_item()
+        logging.debug(f"Registering solution for ilp with id {uid}")
         return True
 
 
@@ -107,7 +110,7 @@ def add_ilp():
         return FAILURE
     new_ilp = Ilp.deserialize_s(new_ilp_serialized)
     ilp_queue.add(new_ilp)
-    print(f"Added new ilp with ID {new_ilp.get_id()}")
+    logging.debug(f"Added new ilp with ID {new_ilp.get_id()}")
 
     return str(new_ilp.get_id())
 
@@ -118,7 +121,7 @@ def get_top_ilp():
 
 @app.route('/get_ilp_by_id/<uid>', methods=['GET'])
 def get_ilp_by_id(uid):
-    print("Looking up ilp with id: " + uid)
+    logging.debug("Looking up ilp with id: " + uid)
     result = ilp_queue.lookup_ilp(int(uid))
     return result.serialize_s() if result else ILP_NOT_FOUND
 
@@ -154,5 +157,5 @@ def get_neighbors(n):
         res = sample(ilp_queue.verifiers, n)
     except: 
         res = ilp_queue.verifiers
-
+    logging.debug(f"sending neighbors {res}")
     return pickle.dumps(res)

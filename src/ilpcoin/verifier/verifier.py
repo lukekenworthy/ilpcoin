@@ -21,18 +21,19 @@ class Verifier(Server):
         self.testing: bool = testing
 
         self.get_neighbors(id)
-        b = self.get_blockchain()
 
-        super().__init__(id, self.get_blockchain(), host, port, testing)
+        b = self.get_blockchain()
+        # verifiers after the first should not have empty chains
+        while id != 1 and b.get_len() == 0:
+            sleep(1)
+            b = self.get_blockchain()
+            logging.debug("Initialized to empty chain, sleeping for 1 second")
+
+        super().__init__(id, b, host, port, testing)
         self.start()
 
-        # verifiers after the first should not have empty chains
-        while self.id != 1 and self.blockchain.get_len() == 0:
-            sleep(1)
-            self.blockchain = self.get_blockchain()
-
         r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/register_verifier/" + str(self.id))
-
+        logging.debug("Registered with queue")
         self.block_queue: List[Dict] = []
 
         # genesis block -> only the first verifier should make this
@@ -43,6 +44,7 @@ class Verifier(Server):
             while not b.validate_nonce(HARDNESS):
                 b.nonce = random.randrange(0, 1000000)
             self.blockchain.add_block(b)
+            logging.debug("Made genesis block")
 
     
     # get neighbors from queue when initializing 
@@ -53,7 +55,7 @@ class Verifier(Server):
             self.neighbors = [int(el) for el in self.neighbors]
             if id in self.neighbors:
                 self.neighbors.remove(id)
-            print(self.neighbors)
+            logging.debug(f"Recieved {len(self.neighbors)} neighbors from queue")
         else:
             self.neighbors: List[int] = [1, 2]
 
@@ -70,6 +72,7 @@ class Verifier(Server):
                     longest_chain = int(r.content)
                     longest_neighbor = i
             
+            logging.debug(f"Grabbing blockchain from neighbor id {longest_neighbor}")
             # grab their chain
             if longest_neighbor == 0:
                 return Blockchain([])
@@ -88,8 +91,7 @@ class Verifier(Server):
             if i != sender:
                 url = f"http://{HOST}:{PORT + int(i)}/send_block/{self.id}" 
                 r = requests.put(url, data=b.serialize(),headers=headers)
-                logging.debug(f"Advertised block to {i}")
-                # maybe eventually we want to handle failed requests here -> perhaps by updating our view of the chain?
+                logging.debug(f"Advertised block to neighbor {i}")
 
     # verify a block
     def process_new_block(self, b: Block, sender:int) -> str:
@@ -104,6 +106,7 @@ class Verifier(Server):
         for i in range(1, len(b.transactions)):
             t = b.transactions[i]
             if not self.blockchain.verify_transaction(t, l, i):
+                logging.debug(f"Found an invalid transaction at index {i}")
                 response = INVALID_TRANSACTION
                 break
         
@@ -112,10 +115,11 @@ class Verifier(Server):
             logging.debug("top of the chain is None")
         if not b.validate_block(self.blockchain.get_top(), HARDNESS):
             response = INVALID_NONCE_OR_POW
+            logging.debug(f"Found invalid nonce or proof of work")
         
         # add this block on the queue of stuff to be advertised
         if response == SUCCESS:
-            logging.debug("Adding block.")
+            logging.debug("Block has been verified successfully")
             self.blockchain.add_block(b)
             self.block_queue.append({"block":b, "sender":sender})
             # tell the queue that we verified a solution
@@ -130,7 +134,7 @@ class Verifier(Server):
 
         while True:
             if self.block_queue != []:
-                logging.debug(f"Found block {counter}")
+                logging.debug(f"About to advertise my {counter}th block")
                 self.advertise_block(self.block_queue[0]['block'], self.block_queue[0]['sender'])
                 self.block_queue.pop(0)
                 counter += 1

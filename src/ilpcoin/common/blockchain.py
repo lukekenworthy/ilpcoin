@@ -96,8 +96,7 @@ class Block:
         # check that the previous_hash is correct
         if previous:
             check &= previous.hash() == self.prev_hash 
-            logging.debug(f"previous hash is correct? {check} hash is {self.prev_hash}")
-            logging.debug(f"acutal answer {previous.hash()}")
+            logging.debug(f"Previous hash was correct? {check}")
         
         if not self.testing:
             r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/" + 'get_ilp_by_id/' + str(self.ILP))
@@ -111,7 +110,8 @@ class Block:
         if self.transactions != []:
             check &= self.transactions[0].sender == self.transactions[0].receiver
             check &= self.transactions[0].amount == REWARD 
-
+        
+        logging.debug(f"Block successfully validated? {check}")
         return check
     
     # both miners and verifiers should use this method to validate a nonce
@@ -119,6 +119,7 @@ class Block:
         try:
             return int(self.hash()[len(self.hash()) - hardness:]) == 0
         except:
+            logging.debug("Found a bad nonce")
             return False
     
     def set_nonce(self, nonce:int) -> None:
@@ -180,13 +181,8 @@ class Blockchain:
     
     # get an ILP solution by id -> used by the queue to service clients 
     def get_solution_by_id(self, id:int) ->  Optional[IlpSolution]:
-        # logging.debug(f"Getting solution with id {id}")
-        # logging.debug("Printing chain")
         for b in self.blockchain:
-            # logging.debug(f"Block has id {b.ILP} and solution {b.ILP_solution}")
-            # logging.debug(f"Truth? {int(b.ILP) == int(id)}")
             if int(b.ILP) == int(id):
-                # print(f"Returning ILP with solution b{b.ILP_solution.ilp_id}")
                 return b.ILP_solution
         return None
     
