@@ -2,6 +2,7 @@ import argparse
 from ilpcoin.ilp_queue.ilp_queue import *
 from ilpcoin.common.constants import QUEUE_HOST, QUEUE_PORT
 import ilpcoin.common.constants
+import os
 
 def main():
     print("Starting ilpqueue")
@@ -14,6 +15,10 @@ def main():
     HOST = args.host
     PORT = int(args.port)
 
+    try:
+        os.mkdir("logs/")
+    except FileExistsError:
+        pass
     logging.basicConfig(filename='logs/queue.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
     logging.basicConfig(level=logging.DEBUG)
 

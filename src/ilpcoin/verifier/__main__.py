@@ -3,6 +3,7 @@ from typing import Optional
 from ilpcoin.verifier.verifier import Verifier
 from ilpcoin.common.constants import *
 import logging
+import os
 
 verifier: Optional[Verifier] = None
 
@@ -14,6 +15,10 @@ def main():
     parser.add_argument("-port", help="Server port number", type=int, default='8000')
     args = parser.parse_args()
 
+    try:
+        os.mkdir("logs/")
+    except FileExistsError:
+        pass
     logging.basicConfig(filename='logs/verifier' + str(args.id) + '.log', filemode='w', format='VERIFIER ID ' + str(args.id) + ' %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
     logging.basicConfig(level=logging.DEBUG)
 
