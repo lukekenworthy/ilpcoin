@@ -163,6 +163,12 @@ class Block:
 
 
 class Blockchain:
+
+    '''A blockchain is a list of blocks, equipped with logic for validating invariants on them. 
+    
+    See individual methods for details.
+    '''
+
     def __init__(self, blocks: List[Block]=[]):
         self.blockchain: List[Block] = blocks
     
@@ -173,23 +179,27 @@ class Blockchain:
         return check
     
     def serialize(self) -> bytes:
+        '''Serialize this blockchain to bytes, using pickle.'''
         return pickle.dumps(self)
     
     @classmethod
-    def deserialize(cls, data:bytes) -> None:
+    def deserialize(cls, data:bytes):
+        '''The inverse of serialize. Creates a Blockchain.'''
         return pickle.loads(data)
     
     def get_top(self) -> Optional[Block]:
+        '''Get the block at the head of the blockchain, or None of the chain is empty. '''
         if self.blockchain == []:
             return None
         else:
             return self.blockchain[len(self.blockchain) - 1]
     
     def add_block(self, block: Block):
+        '''Attach a new block to this blockchain. Note: No verification is performed on add.'''
         self.blockchain.append(block)
     
-    # returns the amount of money that user has in the blockchain
     def get_value_by_user(self, user: str, block_index: int, trans_index: int) -> int:
+        '''Replay the blockchain up to block_index:trans_index to determine how much ilpcoin the user currently has.'''
         amount = 0
 
         # pool up all the money owned by this sender
@@ -206,23 +216,28 @@ class Blockchain:
                     amount += t.amount
         return amount
     
-    # everyone should use this method to verify that a transaction does not double spnd
     def verify_transaction(self, transaction: Transaction, block_index: int, trans_index: int) -> bool:
+        '''Verify that transaction on this chain at block_index:trans_index does not double spend.'''
         amount = self.get_value_by_user(transaction.sender, block_index, trans_index)
         return not (amount < transaction.amount)
     
     def get_len(self) -> int:
+        '''Return the number of blocks in the blockchain.'''
         return len(self.blockchain)
     
-    # get an ILP solution by id -> used by the queue to service clients 
     def get_solution_by_id(self, id:int) ->  Optional[IlpSolution]:
+        '''Check if a solution for the ilp with id `id` exists on the chain, and return it if it does. 
+        
+        This is used by the queue to service client requests. '''
         for b in self.blockchain:
             if int(b.ILP) == int(id):
                 return b.ILP_solution
         return None
     
-    # verify the entire blockchain for consistency and valid POWs
     def verify_blockchain(self) -> bool:
+        '''Verify the integrity of the blockciain. 
+
+        Replays the entire chain for consistency and valid proof of work: both nonces and Ilp solutions.'''
         previous = None
         for i in range(len(self.blockchain)):
             if not self.blockchain[i].validate_block(previous, HARDNESS):
