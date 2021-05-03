@@ -19,8 +19,12 @@ m.objective = maximize(xsum(p[i] * x[i] for i in I))
 # add constraints
 m += xsum(w[i] * x[i] for i in I) <= c
 
-# create a instance of our 
-# custom ILP class representing the decision version of
-# our problem, and a value of k = 40
+
 def knapsack():
+    """Return a knapsack Ilp.
+    
+    Return an instance of our custom ILP class representing 
+    the decision version of this knapsack problem with 
+    a value of k = 40
+    """
     return Ilp(m, 40, -1, True)

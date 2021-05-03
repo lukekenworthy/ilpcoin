@@ -8,6 +8,8 @@ import os
 verifier: Optional[Verifier] = None
 
 def main():
+    '''Run the main verifier routine. Invoke the application with -h for information on CLI arguments.'''
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-id", help="Node Id", type=int, default=0)
     parser.add_argument("-t", help=("Optional testing flag"), default=False)

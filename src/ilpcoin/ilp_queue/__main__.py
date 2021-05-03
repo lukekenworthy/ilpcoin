@@ -5,6 +5,8 @@ import ilpcoin.common.constants
 import os
 
 def main():
+    '''Launches the IlpQueue Flask app. Invoke with -h for more information on parameters'''
+
     print("Starting ilpqueue")
     parser = argparse.ArgumentParser()
     parser.add_argument("-host", help="Server hostname", type=str, default=QUEUE_HOST)
@@ -15,13 +17,16 @@ def main():
     HOST = args.host
     PORT = int(args.port)
 
+    # Configure logging
     try:
         os.mkdir("logs/")
     except FileExistsError:
         pass
+
     logging.basicConfig(filename='logs/queue.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
     logging.basicConfig(level=logging.DEBUG)
 
+    # Specify verifiers needed
     ilpcoin.common.constants.VERIFIERS_NEEDED=args.verifiers
 
     app.run(host=HOST, port=PORT)

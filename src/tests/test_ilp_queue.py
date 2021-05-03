@@ -9,7 +9,7 @@ demo_queue_object = IlpQueue
 
 class IlpQueueTests(unittest.TestCase):
     def test_queue_add_inc_pop(self): 
-        ilp_queue = IlpQueue()
+        ilp_queue = IlpQueue(generate_random_ilps=False)
         test_ilp_1 = knapsack()
         test_ilp_2 = traveling_salesman()
 
