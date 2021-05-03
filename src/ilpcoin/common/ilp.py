@@ -134,14 +134,10 @@ class Ilp:
 
     # Check if an IlpSolution object ssatisfies this ilp. 
     def check(self, solution : IlpSolution) -> bool:
-        try: 
-            # print(f"Checking")
-            
+        try:             
             # The solution isn't for this ilp. 
             # if solution.ilp_id != self.uid: 
             #     return False
-
-            # print(f"Good ILP")
 
             solution_value = self.__eval_objective_function(solution)
             # print(f"Objective function has value  {solution_value}")

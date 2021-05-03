@@ -4,33 +4,26 @@ import requests
 from ilpcoin.common.ilp import *
 from ilpcoin.common.constants import *
 import ilpcoin.common.constants
+from ilpcoin.common.sample_ilps.random_knapsack import random_knapsack
 import queue
 import logging
 import threading
 from random import sample
 
-# ToDo: All the database stuff
-# ToDo: Authentication
-# ToDo: Input sanitization
-
 # IlpQueue represents a queue of ilps. 
 # This state needs to be written to databases. 
 class IlpQueue:
-    def __init__(self, initial_verifiers : List[int] = []):
+    def __init__(self, initial_verifiers : List[int] = [], generate_random_ilps = True):
         self.q = queue.Queue() # the queue 
         self.top : Optional[Ilp] = None  # the top ilp, currently worked on by miners
         self.count : int = 0   # the number of verifiers who have provided solutions for self.top
         self.ilp_history : dict[int, Ilp] = {} # a dictionary mapping all previous ilp IDs to their ilp problems. 
-        # self.soln_history : dict[int, IlpSolution] = {} #  a dictionary mapping all previous solved ilp IDs to their solutions. Right now, this is never updated
         self.last_used_uid = 0 # last uid; let's not repeat uids!   
         self.verifiers = initial_verifiers
         self.last_used_verifier = 0
-
-    # Eventually, this will query a database and reconstruct the Ilp from there
-    @classmethod
-    def resume_from_database(cls) -> 'IlpQueue':
-        #ToDo
-        return cls()
+        self.generate_random_ilps = generate_random_ilps
+        if self.generate_random_ilps: 
+            self.__add_random_ilp()
 
     # Add an Ilp (see ilp.py for representation) to the back of the queue
     def add(self, ilp : Ilp) -> int:
@@ -64,21 +57,22 @@ class IlpQueue:
             return self.ilp_history[id]
         except:
             return None
-
-    # def lookup_solution(self, id : int)  -> Optional[IlpSolution]:
-    #     # do we want to query a verifier here?
-    #     # how do we get these, anyway?
-    #     try:
-    #         return self.soln_history[id]
-    #     except:
-    #         return None
+    
+    def __add_random_ilp(self): 
+        self.add(random_knapsack())
 
     def __complete_item(self) -> None:
         logging.debug("Ilp with id " + str(self.top.get_id()) + " is popped from queue.") 
+
         if not self.q.empty():
             self.top = self.q.get()
         else:
-            self.top = None
+            if self.generate_random_ilps: 
+                self.__add_random_ilp()
+                self.top = self.q.get()
+            else: 
+                self.top = None
+
         self.count = 0
 
     # Called when a solution has come in for the current Ilp to increment count, 
@@ -98,7 +92,7 @@ class IlpQueue:
         return True
 
 
-ilp_queue = IlpQueue.resume_from_database()
+ilp_queue = IlpQueue(generate_random_ilps=True)
 
 app = Flask(__name__)
 
