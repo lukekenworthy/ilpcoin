@@ -11,35 +11,28 @@ import pickle
 from time import sleep
 
 class InvalidResponseError(Exception):
+    '''Raised when this miner received a response to a web request that it cannot deal with.'''
     pass
 
 class ClientPeer:
+    '''Represents a miner. 
+    
+    Does not contain any important state; simply wraps the mining routine.'''
 
     def __init__(self, host="localhost", id:int=0, buggy:bool=False) -> None:
+        '''Initialize the miner state.'''
         self.host = host
         self.port:str = str(8000 + id)
         self.id:str = str(id)
         self.reset_neighbors(5)
-        self.buggy = buggy # to be used in tests
+        self.buggy = buggy # for testing
 
     def reset_neighbors(self, n) -> None:
+        '''Clear a stale list of neighbors.'''
         self.neighbors = self.get_n_neighbors(n)
 
-    """
-    def broadcast_transaction(self, Transaction):
-        payload = Transaction.serialize()
-        for neighbor in self.neighbors:
-            url = self.host + ":" + str(neighbor) + "/send_transaction"
-            requests.post(url, data=payload)
-    
-    def broadcast_block(self, Block):
-        payload = Block.serialize()
-        for neighbor in self.neighbors:
-            url = self.host + ":" + neighbor + "/send_block"
-            requests.post(url, data=payload)
-    """
-
     def get_n_neighbors(self, n:int) -> List[str]:
+        '''Query the queue for n verifiers. '''
         url = f"http://{QUEUE_HOST}:{QUEUE_PORT}/get_neighbors/{n}"
         r = requests.get(url)
         if r.status_code != 200:
@@ -47,10 +40,8 @@ class ClientPeer:
         neighbors = pickle.loads(r.content)
         return neighbors
 
-
-
-
     def start_mine(self):
+        '''Run the mining routine forever.'''
         while True:
             r = requests.get(f"http://{QUEUE_HOST}:{QUEUE_PORT}/get_top_ilp")
             ilp_text = r.text
@@ -72,18 +63,15 @@ class ClientPeer:
             prev_block: Block = Block().deserialize(previous_block_text)
             prev_ilp_id = prev_block.ILP
             top_ilp_id = ilp.uid
+
             # print(f"Top ILP has ID {top_ilp_id} and prev block has id {prev_ilp_id}")
             if prev_ilp_id != top_ilp_id - 1:
                 continue
-
-            # print("Attempting solve")
 
             solved_ilp = ilp.solve()
             if solved_ilp is None:
                 continue
             
-            # print("ILP Solved")
-
             prev_hash = prev_block.hash()
             transaction = Transaction(self.id, self.id, 5)
             new_block = Block([transaction], str(prev_hash))
@@ -102,9 +90,23 @@ class ClientPeer:
             }'''
             headers = {"Content-Type":"application/binary",}
             r = requests.put(url, data=new_block.serialize(),headers=headers)
-            #r = requests.post(url, payload)
+
             print(f"sent a block w code {r.status_code}")
-            
+
+    """
+    def broadcast_transaction(self, Transaction):
+        payload = Transaction.serialize()
+        for neighbor in self.neighbors:
+            url = self.host + ":" + str(neighbor) + "/send_transaction"
+            requests.post(url, data=payload)
+    
+    def broadcast_block(self, Block):
+        payload = Block.serialize()
+        for neighbor in self.neighbors:
+            url = self.host + ":" + neighbor + "/send_block"
+            requests.post(url, data=payload)
+    """
+
 
         
 
