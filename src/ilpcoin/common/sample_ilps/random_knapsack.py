@@ -4,7 +4,12 @@ from ilpcoin.common.ilp import Ilp
 import random
 
 def random_knapsack(): 
-
+    """Return a knapsack Ilp with random weights and values.
+    
+    Return an instance of our custom ILP class representing 
+    the decision version of a random knpasack problem with 
+    a value of k = 40.
+    """
     # constants 
     p = [random.randint(0,35) for x in range(6)]
     w = [random.randint(0,35) for x in range(6)]
@@ -21,5 +26,5 @@ def random_knapsack():
     # add constraints
     m += xsum(w[i] * x[i] for i in I) <= c
 
-    
+
     return Ilp(m, 40, -1, True)

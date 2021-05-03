@@ -62,11 +62,17 @@ for (i, j) in product(V - {0}, V - {0}):
         model += y[i] - (n+1)*x[i][j] >= y[j]-n
 
 def traveling_salesman(): 
+    """Return a TSM Ilp with random weights and values.
+    
+    Return an instance of our custom ILP class representing 
+    the decision version of this problem with 
+    a value of k = 1000.
+    """
     return Ilp(model, 1000)
 
-# # optimizing
-# model.optimize()
+# To manually check the solution, uncomment the following code:
 
+# model.optimize()
 # # checking if a solution was found
 # if model.num_solutions:
 #     out.write('route with total distance %g found: %s'

@@ -14,7 +14,6 @@ class BadBlockError(Exception):
     pass
 
 class Transaction:
-
     def __init__(self, sender:str='', receiver: str='', amount: int=0):
         self.sender = sender
         self.receiver = receiver

@@ -7,6 +7,8 @@ from ilpcoin.common.constants import *
 from ilpcoin.common.ilp import *
 
 def main():
+    '''Runs a demo routine simulating a sample customer, who inteacts with the queue. 
+    '''
     queue_url = "http://" + QUEUE_HOST + ":" + str(QUEUE_PORT)
     print("Sending TSM")
     demo_ilp = traveling_salesman()

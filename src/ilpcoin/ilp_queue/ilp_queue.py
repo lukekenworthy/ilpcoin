@@ -11,7 +11,6 @@ import threading
 from random import sample
 
 # IlpQueue represents a queue of ilps. 
-# This state needs to be written to databases. 
 class IlpQueue:
     def __init__(self, initial_verifiers : List[int] = [], generate_random_ilps = True):
         self.q = queue.Queue() # the queue 
