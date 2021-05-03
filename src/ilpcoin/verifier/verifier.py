@@ -59,20 +59,20 @@ class Verifier(Server):
             logging.debug("Made genesis block")
 
     
-        def get_neighbors(self, id) -> None:
-            '''Query the Ilp queue for a set of 5 neighbors that can be used to gossip new blocks. 
-            
-            Called on initialization. 
-            '''
-            if not self.testing:
-                r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/get_neighbors/5")
-                self.neighbors = pickle.loads(r.content)
-                self.neighbors = [int(el) for el in self.neighbors]
-                if id in self.neighbors:
-                    self.neighbors.remove(id)
-                logging.debug(f"Recieved {len(self.neighbors)} neighbors from queue")
-            else:
-                self.neighbors: List[int] = [1, 2]
+    def get_neighbors(self, id) -> None:
+        '''Query the Ilp queue for a set of 5 neighbors that can be used to gossip new blocks. 
+        
+        Called on initialization. 
+        '''
+        if not self.testing:
+            r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/get_neighbors/5")
+            self.neighbors = pickle.loads(r.content)
+            self.neighbors = [int(el) for el in self.neighbors]
+            if id in self.neighbors:
+                self.neighbors.remove(id)
+            logging.debug(f"Recieved {len(self.neighbors)} neighbors from queue")
+        else:
+            self.neighbors: List[int] = [1, 2]
 
     def get_blockchain(self) -> Optional[Blockchain]:
         '''Query neighbors to find the most up-to-date blockchain.'''
