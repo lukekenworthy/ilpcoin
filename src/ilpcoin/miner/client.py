@@ -1,11 +1,11 @@
 #!usr/bin/env python3
 
-from ilpcoin.common.blockchain import Block, Transaction
-from ilpcoin.common.constants import HARDNESS, PORT, QUEUE_HOST, QUEUE_PORT, HOST
+from ilpcoin.common.blockchain import Block, Transaction, Blockchain
+from ilpcoin.common.constants import HARDNESS, PORT, QUEUE_HOST, QUEUE_PORT, HOST, REWARD
 from ilpcoin.common.ilp import Ilp, IlpSolution
 import requests
 import random
-from typing import List, Optional
+from typing import List, Optional, Set
 import uuid
 import pickle
 from time import sleep
@@ -24,6 +24,36 @@ class ClientPeer:
 
     def reset_neighbors(self, n) -> None:
         self.neighbors = self.get_n_neighbors(n)
+    
+
+    # def gen_transactions(self) -> List[Transaction]:
+    #     neighbors_valid = False
+    #     neighbor_port = None
+    #     r = None
+    #     while not neighbors_valid:
+    #         neighbor = random.choice(self.neighbors)
+    #         neighbor_port = PORT + int(neighbor)
+    #         url = f"http://{HOST}:{neighbor_port}/get_blockchain"
+    #         r = requests.get(url)
+
+    #         print(f"get_previous status code {r.status_code}")
+    #         if r.status_code == 200:
+    #             neighbors_valid = True
+    #         else:
+    #             sleep(1)
+
+    #     blockchain_text = r.content
+    #     blockchain: Blockchain = Blockchain().deserialize(blockchain_text)
+
+    #     users: Set[str] = set()
+    #     for block in blockchain.blockchain:
+    #         for transaction in block.transactions:
+    #             users.add(transaction.sender)
+    #             users.add(transaction.receiver)
+
+        
+        
+
 
     """
     def broadcast_transaction(self, Transaction):
@@ -54,6 +84,7 @@ class ClientPeer:
         while True:
             r = requests.get(f"http://{QUEUE_HOST}:{QUEUE_PORT}/get_top_ilp")
             ilp_text = r.text
+            print(ilp_text)
             ilp = Ilp.deserialize_s(ilp_text) 
             neighbors_valid = False
             neighbor_port = None
@@ -85,8 +116,11 @@ class ClientPeer:
             # print("ILP Solved")
 
             prev_hash = prev_block.hash()
-            transaction = Transaction(self.id, self.id, 5)
-            new_block = Block([transaction], str(prev_hash))
+            mining_reward = Transaction(self.id, self.id, REWARD)
+            giveaway: List[Transaction] = []
+            for _ in range(REWARD - 1):
+                giveaway.append(Transaction(self.id, str(uuid.uuid4()), 1))
+            new_block = Block([mining_reward, *giveaway], str(prev_hash))
             new_block.ILP = ilp.get_id()
             new_block.ILP_solution = solved_ilp
             mx = 2 ** 32 - 1
@@ -97,9 +131,6 @@ class ClientPeer:
 
             url = f"http://{HOST}:{neighbor_port}/send_block/{self.id}"
             print(f"about to post to {url}")
-            '''payload = {
-                "block": new_block.serialize()
-            }'''
             headers = {"Content-Type":"application/binary",}
             r = requests.put(url, data=new_block.serialize(),headers=headers)
             #r = requests.post(url, payload)
