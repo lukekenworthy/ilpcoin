@@ -15,9 +15,21 @@ from requests.models import StreamConsumedError
 
 class Verifier(Server):
 
-    # init starts the server as well
-    def __init__(self, id:int, host: str=HOST, port: int=PORT, testing=False):
+    '''
+    The verifier class represents a verifier. 
 
+    Attributes
+    ----------
+    Inherits id, host, port, testing, blockchain, blocks_to_verify from Server superclass. 
+    
+    testing : bool 
+        Testing mode enabled? Set to false unless working with the unit testing suite. 
+    neighbors : List[str]
+        A list of other verifiers with whom this verifier should publish blocks. 
+    '''
+
+    def __init__(self, id:int, host: str=HOST, port: int=PORT, testing=False):
+        '''Initialize a verifier and a server. '''
         self.testing: bool = testing
 
         self.get_neighbors(id)
@@ -47,8 +59,11 @@ class Verifier(Server):
             logging.debug("Made genesis block")
 
     
-    # get neighbors from queue when initializing 
-    def get_neighbors(self, id) -> None:
+        def get_neighbors(self, id) -> None:
+        '''Query the Ilp queue for a set of 5 neighbors that can be used to gossip new blocks. 
+        
+        Called on initialization. 
+        '''
         if not self.testing:
             r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/get_neighbors/5")
             self.neighbors = pickle.loads(r.content)
@@ -59,8 +74,8 @@ class Verifier(Server):
         else:
             self.neighbors: List[int] = [1, 2]
 
-    # get blockchain from neighbors when starting up
     def get_blockchain(self) -> Optional[Blockchain]:
+        '''Query neighbors to find the most up-to-date blockchain.'''
         if not self.testing:
             longest_chain = -1
             longest_neighbor = 0
@@ -82,8 +97,8 @@ class Verifier(Server):
         else:
             return Blockchain(blocks=[])
     
-    # advertise a found block to neighbors
     def advertise_block(self, b: Block, sender:int):
+        '''Avertise block b to every known neighbor.'''
         headers = {"Content-Type":"application/binary",}
         if self.testing:
             return 
@@ -93,8 +108,11 @@ class Verifier(Server):
                 r = requests.put(url, data=b.serialize(),headers=headers)
                 logging.debug(f"Advertised block to neighbor {i}")
 
-    # verify a block
     def process_new_block(self, b: Block, sender:int) -> str:
+        '''Verify that a new latest block, b, is valid, and add it to the blockchain on success.
+        
+        Also informs the queue of the newly verified block, so that the queue can progress to the next Ilp once enough
+        verifiers have solved it.'''
         response = SUCCESS
 
         # validate the transactions in the block
@@ -126,10 +144,13 @@ class Verifier(Server):
             r = requests.get("http://" + QUEUE_HOST + ":" + str(QUEUE_PORT) + "/" + 'verify_ilp/' + str(b.ILP))
         return response
     
-    # this loop just advertises blocks in the main thread
-    # we want advertising to be concurrent to request processing else we risk system wide deadlock
-    # eventual optimization: each neighbor gets a thread
+
     def run(self):
+        '''Run the block advertising routine indefinitely. 
+        
+        We want advertising to be concurrent to request processing else we risk system wide deadlock
+        '''
+
         counter = 0
 
         while True:

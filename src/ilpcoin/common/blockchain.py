@@ -228,7 +228,8 @@ class Blockchain:
     def get_solution_by_id(self, id:int) ->  Optional[IlpSolution]:
         '''Check if a solution for the ilp with id `id` exists on the chain, and return it if it does. 
         
-        This is used by the queue to service client requests. '''
+        This is used by the queue to service client requests.
+        '''
         for b in self.blockchain:
             if int(b.ILP) == int(id):
                 return b.ILP_solution
@@ -237,7 +238,8 @@ class Blockchain:
     def verify_blockchain(self) -> bool:
         '''Verify the integrity of the blockciain. 
 
-        Replays the entire chain for consistency and valid proof of work: both nonces and Ilp solutions.'''
+        Replays the entire chain for consistency and valid proof of work: both nonces and Ilp solutions.
+        '''
         previous = None
         for i in range(len(self.blockchain)):
             if not self.blockchain[i].validate_block(previous, HARDNESS):
