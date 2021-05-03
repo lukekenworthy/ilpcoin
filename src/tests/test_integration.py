@@ -22,7 +22,7 @@ class IntegrationTestsStandard(unittest.TestCase):
         time.sleep(2)
         threading.Thread(target=subprocess.run, args=[["miner", "-id", "101"]], kwargs={"timeout":15}).start()
 
-        time.sleep(25)
+        time.sleep(30)
     
     def test_registration_neighbors(self):
         with open("logs/verifier1.log", "r") as f:
@@ -109,7 +109,7 @@ class IntegrationTestsBuggyMiner(unittest.TestCase):
         threading.Thread(target=subprocess.run, args=[["miner", "-id", "101"]], kwargs={"timeout":20}).start()
         threading.Thread(target=subprocess.run, args=[["miner", "-id", "102", "-buggy"]], kwargs={"timeout":20}).start()
 
-        time.sleep(30)
+        time.sleep(32)
     
     def test_faulty_miner(self):
 

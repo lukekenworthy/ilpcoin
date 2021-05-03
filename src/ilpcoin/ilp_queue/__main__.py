@@ -21,8 +21,12 @@ def main():
     try:
         os.mkdir("logs/")
     except FileExistsError:
-        pass
+       None
 
+    # logging initialization
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+    
     logging.basicConfig(filename='logs/queue.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
     logging.basicConfig(level=logging.DEBUG)
 

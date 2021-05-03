@@ -21,6 +21,11 @@ def main():
         os.mkdir("logs/")
     except FileExistsError:
         pass
+
+    # logging initialization
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+
     logging.basicConfig(filename='logs/verifier' + str(args.id) + '.log', filemode='w', format='VERIFIER ID ' + str(args.id) + ' %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
     logging.basicConfig(level=logging.DEBUG)
 
