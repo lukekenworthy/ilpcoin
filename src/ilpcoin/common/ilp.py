@@ -184,6 +184,7 @@ class Ilp:
     def check(self, solution : IlpSolution) -> bool:
         '''Return true iff solution's variables solve this decision Ilp'''
         try:             
+            
             # The solution isn't for this ilp. 
             # if solution.ilp_id != self.uid: 
             #     return False
