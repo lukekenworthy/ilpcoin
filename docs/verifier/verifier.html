@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>ilpcoin.verifier.verifier API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>ilpcoin.verifier.verifier</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!usr/bin/env python3
+
+from pickle import LIST
+from typing import Dict, Tuple
+from ilpcoin.verifier.server import Server
+from time import sleep
+from ilpcoin.common.blockchain import *
+from ilpcoin.common.constants import *
+import requests
+import logging
+from ilpcoin.common.sample_ilps.knapsack import *
+import random
+
+from requests.models import StreamConsumedError
+
+class Verifier(Server):
+
+    &#39;&#39;&#39;
+    The verifier class represents a verifier. 
+
+    Attributes
+    ----------
+    Inherits id, host, port, testing, blockchain, blocks_to_verify from Server superclass. 
+    
+    testing : bool 
+        Testing mode enabled? Set to false unless working with the unit testing suite. 
+    neighbors : List[str]
+        A list of other verifiers with whom this verifier should publish blocks. 
+    &#39;&#39;&#39;
+
+    def __init__(self, id:int, host: str=HOST, port: int=PORT, testing=False):
+        &#39;&#39;&#39;Initialize a verifier and a server. &#39;&#39;&#39;
+        self.testing: bool = testing
+
+        self.get_neighbors(id)
+
+        b = self.get_blockchain()
+        # verifiers after the first should not have empty chains
+        while id != 1 and b.get_len() == 0:
+            sleep(1)
+            b = self.get_blockchain()
+            logging.debug(&#34;Initialized to empty chain, sleeping for 1 second&#34;)
+
+        super().__init__(id, b, host, port, testing)
+        self.start()
+
+        r = requests.get(&#34;http://&#34; + QUEUE_HOST + &#34;:&#34; + str(QUEUE_PORT) + &#34;/register_verifier/&#34; + str(self.id))
+        logging.debug(&#34;Registered with queue&#34;)
+        self.block_queue: List[Dict] = []
+
+        # genesis block -&gt; only the first verifier should make this
+        if self.id == 1:
+            ilp = knapsack()
+            ilp.set_id(0)
+            b = Block([], &#39;&#39;, 0, ilp.get_id(), ilp.solve())
+            while not b.validate_nonce(HARDNESS):
+                b.nonce = random.randrange(0, 1000000)
+            self.blockchain.add_block(b)
+            logging.debug(&#34;Made genesis block&#34;)
+
+    
+    def get_neighbors(self, id) -&gt; None:
+        &#39;&#39;&#39;Query the Ilp queue for a set of 5 neighbors that can be used to gossip new blocks. 
+        
+        Called on initialization. 
+        &#39;&#39;&#39;
+        if not self.testing:
+            r = requests.get(&#34;http://&#34; + QUEUE_HOST + &#34;:&#34; + str(QUEUE_PORT) + &#34;/get_neighbors/5&#34;)
+            self.neighbors = pickle.loads(r.content)
+            self.neighbors = [int(el) for el in self.neighbors]
+            if id in self.neighbors:
+                self.neighbors.remove(id)
+            logging.debug(f&#34;Recieved {len(self.neighbors)} neighbors from queue&#34;)
+        else:
+            self.neighbors: List[int] = [1, 2]
+
+    def get_blockchain(self) -&gt; Optional[Blockchain]:
+        &#39;&#39;&#39;Query neighbors to find the most up-to-date blockchain.&#39;&#39;&#39;
+        if not self.testing:
+            longest_chain = -1
+            longest_neighbor = 0
+
+            # figure out who has the longest fork
+            for i in self.neighbors:
+                r = requests.get(&#34;http://&#34; + HOST + &#34;:&#34; + str(PORT + int(i)) + &#34;/get_length&#34;)
+                if int(r.content) &gt; longest_chain:
+                    longest_chain = int(r.content)
+                    longest_neighbor = i
+            
+            logging.debug(f&#34;Grabbing blockchain from neighbor id {longest_neighbor}&#34;)
+            # grab their chain
+            if longest_neighbor == 0:
+                return Blockchain([])
+            else:
+                r = requests.get(&#34;http://&#34; + HOST + &#34;:&#34; + str(PORT + longest_neighbor) + &#34;/get_blockchain&#34;)
+                return Blockchain.deserialize(r.content)
+        else:
+            return Blockchain(blocks=[])
+    
+    def advertise_block(self, b: Block, sender:int):
+        &#39;&#39;&#39;Avertise block b to every known neighbor.&#39;&#39;&#39;
+        headers = {&#34;Content-Type&#34;:&#34;application/binary&#34;,}
+        if self.testing:
+            return 
+        for i in self.neighbors:
+            if i != sender:
+                url = f&#34;http://{HOST}:{PORT + int(i)}/send_block/{self.id}&#34; 
+                r = requests.put(url, data=b.serialize(),headers=headers)
+                logging.debug(f&#34;Advertised block to neighbor {i}&#34;)
+
+    def process_new_block(self, b: Block, sender:int) -&gt; str:
+        &#39;&#39;&#39;Verify that a new latest block, b, is valid, and add it to the blockchain on success.
+        
+        Also informs the queue of the newly verified block, so that the queue can progress to the next Ilp once enough
+        verifiers have solved it.&#39;&#39;&#39;
+        response = SUCCESS
+
+        # validate the transactions in the block
+        valid = b.transactions[0].amount &lt; REWARD
+        l = self.blockchain.get_len()
+
+        # start from index 1 to skip the mining reward
+        # may eventually want to optimize this 
+        for i in range(1, len(b.transactions)):
+            t = b.transactions[i]
+            if not self.blockchain.verify_transaction(t, l, i):
+                logging.debug(f&#34;Found an invalid transaction at index {i}&#34;)
+                response = INVALID_TRANSACTION
+                break
+        
+        # validate static components - nonce, previous_hash, proof of work
+        if not self.blockchain.get_top():
+            logging.debug(&#34;top of the chain is None&#34;)
+        if not b.validate_block(self.blockchain.get_top(), HARDNESS):
+            response = INVALID_NONCE_OR_POW
+            logging.debug(f&#34;Found invalid nonce or proof of work&#34;)
+        
+        # add this block on the queue of stuff to be advertised
+        if response == SUCCESS:
+            logging.debug(&#34;Block has been verified successfully&#34;)
+            self.blockchain.add_block(b)
+            self.block_queue.append({&#34;block&#34;:b, &#34;sender&#34;:sender})
+            # tell the queue that we verified a solution
+            r = requests.get(&#34;http://&#34; + QUEUE_HOST + &#34;:&#34; + str(QUEUE_PORT) + &#34;/&#34; + &#39;verify_ilp/&#39; + str(b.ILP))
+        return response
+    
+
+    def run(self):
+        &#39;&#39;&#39;Run the block advertising routine indefinitely. 
+        
+        We want advertising to be concurrent to request processing else we risk system wide deadlock
+        &#39;&#39;&#39;
+
+        counter = 0
+
+        while True:
+            if self.block_queue != []:
+                logging.debug(f&#34;About to advertise my {counter}th block&#34;)
+                self.advertise_block(self.block_queue[0][&#39;block&#39;], self.block_queue[0][&#39;sender&#39;])
+                self.block_queue.pop(0)
+                counter += 1
+            else:
+                sleep(0.1)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="ilpcoin.verifier.verifier.Verifier"><code class="flex name class">
+<span>class <span class="ident">Verifier</span></span>
+<span>(</span><span>id: int, host: str = 'localhost', port: int = 8000, testing=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The verifier class represents a verifier. </p>
+<h2 id="attributes">Attributes</h2>
+<p>Inherits id, host, port, testing, blockchain, blocks_to_verify from Server superclass. </p>
+<dl>
+<dt><strong><code>testing</code></strong> :&ensp;<code>bool </code></dt>
+<dd>Testing mode enabled? Set to false unless working with the unit testing suite.</dd>
+<dt><strong><code>neighbors</code></strong> :&ensp;<code>List[str]</code></dt>
+<dd>A list of other verifiers with whom this verifier should publish blocks.</dd>
+</dl>
+<p>Initialize a verifier and a server.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Verifier(Server):
+
+    &#39;&#39;&#39;
+    The verifier class represents a verifier. 
+
+    Attributes
+    ----------
+    Inherits id, host, port, testing, blockchain, blocks_to_verify from Server superclass. 
+    
+    testing : bool 
+        Testing mode enabled? Set to false unless working with the unit testing suite. 
+    neighbors : List[str]
+        A list of other verifiers with whom this verifier should publish blocks. 
+    &#39;&#39;&#39;
+
+    def __init__(self, id:int, host: str=HOST, port: int=PORT, testing=False):
+        &#39;&#39;&#39;Initialize a verifier and a server. &#39;&#39;&#39;
+        self.testing: bool = testing
+
+        self.get_neighbors(id)
+
+        b = self.get_blockchain()
+        # verifiers after the first should not have empty chains
+        while id != 1 and b.get_len() == 0:
+            sleep(1)
+            b = self.get_blockchain()
+            logging.debug(&#34;Initialized to empty chain, sleeping for 1 second&#34;)
+
+        super().__init__(id, b, host, port, testing)
+        self.start()
+
+        r = requests.get(&#34;http://&#34; + QUEUE_HOST + &#34;:&#34; + str(QUEUE_PORT) + &#34;/register_verifier/&#34; + str(self.id))
+        logging.debug(&#34;Registered with queue&#34;)
+        self.block_queue: List[Dict] = []
+
+        # genesis block -&gt; only the first verifier should make this
+        if self.id == 1:
+            ilp = knapsack()
+            ilp.set_id(0)
+            b = Block([], &#39;&#39;, 0, ilp.get_id(), ilp.solve())
+            while not b.validate_nonce(HARDNESS):
+                b.nonce = random.randrange(0, 1000000)
+            self.blockchain.add_block(b)
+            logging.debug(&#34;Made genesis block&#34;)
+
+    
+    def get_neighbors(self, id) -&gt; None:
+        &#39;&#39;&#39;Query the Ilp queue for a set of 5 neighbors that can be used to gossip new blocks. 
+        
+        Called on initialization. 
+        &#39;&#39;&#39;
+        if not self.testing:
+            r = requests.get(&#34;http://&#34; + QUEUE_HOST + &#34;:&#34; + str(QUEUE_PORT) + &#34;/get_neighbors/5&#34;)
+            self.neighbors = pickle.loads(r.content)
+            self.neighbors = [int(el) for el in self.neighbors]
+            if id in self.neighbors:
+                self.neighbors.remove(id)
+            logging.debug(f&#34;Recieved {len(self.neighbors)} neighbors from queue&#34;)
+        else:
+            self.neighbors: List[int] = [1, 2]
+
+    def get_blockchain(self) -&gt; Optional[Blockchain]:
+        &#39;&#39;&#39;Query neighbors to find the most up-to-date blockchain.&#39;&#39;&#39;
+        if not self.testing:
+            longest_chain = -1
+            longest_neighbor = 0
+
+            # figure out who has the longest fork
+            for i in self.neighbors:
+                r = requests.get(&#34;http://&#34; + HOST + &#34;:&#34; + str(PORT + int(i)) + &#34;/get_length&#34;)
+                if int(r.content) &gt; longest_chain:
+                    longest_chain = int(r.content)
+                    longest_neighbor = i
+            
+            logging.debug(f&#34;Grabbing blockchain from neighbor id {longest_neighbor}&#34;)
+            # grab their chain
+            if longest_neighbor == 0:
+                return Blockchain([])
+            else:
+                r = requests.get(&#34;http://&#34; + HOST + &#34;:&#34; + str(PORT + longest_neighbor) + &#34;/get_blockchain&#34;)
+                return Blockchain.deserialize(r.content)
+        else:
+            return Blockchain(blocks=[])
+    
+    def advertise_block(self, b: Block, sender:int):
+        &#39;&#39;&#39;Avertise block b to every known neighbor.&#39;&#39;&#39;
+        headers = {&#34;Content-Type&#34;:&#34;application/binary&#34;,}
+        if self.testing:
+            return 
+        for i in self.neighbors:
+            if i != sender:
+                url = f&#34;http://{HOST}:{PORT + int(i)}/send_block/{self.id}&#34; 
+                r = requests.put(url, data=b.serialize(),headers=headers)
+                logging.debug(f&#34;Advertised block to neighbor {i}&#34;)
+
+    def process_new_block(self, b: Block, sender:int) -&gt; str:
+        &#39;&#39;&#39;Verify that a new latest block, b, is valid, and add it to the blockchain on success.
+        
+        Also informs the queue of the newly verified block, so that the queue can progress to the next Ilp once enough
+        verifiers have solved it.&#39;&#39;&#39;
+        response = SUCCESS
+
+        # validate the transactions in the block
+        valid = b.transactions[0].amount &lt; REWARD
+        l = self.blockchain.get_len()
+
+        # start from index 1 to skip the mining reward
+        # may eventually want to optimize this 
+        for i in range(1, len(b.transactions)):
+            t = b.transactions[i]
+            if not self.blockchain.verify_transaction(t, l, i):
+                logging.debug(f&#34;Found an invalid transaction at index {i}&#34;)
+                response = INVALID_TRANSACTION
+                break
+        
+        # validate static components - nonce, previous_hash, proof of work
+        if not self.blockchain.get_top():
+            logging.debug(&#34;top of the chain is None&#34;)
+        if not b.validate_block(self.blockchain.get_top(), HARDNESS):
+            response = INVALID_NONCE_OR_POW
+            logging.debug(f&#34;Found invalid nonce or proof of work&#34;)
+        
+        # add this block on the queue of stuff to be advertised
+        if response == SUCCESS:
+            logging.debug(&#34;Block has been verified successfully&#34;)
+            self.blockchain.add_block(b)
+            self.block_queue.append({&#34;block&#34;:b, &#34;sender&#34;:sender})
+            # tell the queue that we verified a solution
+            r = requests.get(&#34;http://&#34; + QUEUE_HOST + &#34;:&#34; + str(QUEUE_PORT) + &#34;/&#34; + &#39;verify_ilp/&#39; + str(b.ILP))
+        return response
+    
+
+    def run(self):
+        &#39;&#39;&#39;Run the block advertising routine indefinitely. 
+        
+        We want advertising to be concurrent to request processing else we risk system wide deadlock
+        &#39;&#39;&#39;
+
+        counter = 0
+
+        while True:
+            if self.block_queue != []:
+                logging.debug(f&#34;About to advertise my {counter}th block&#34;)
+                self.advertise_block(self.block_queue[0][&#39;block&#39;], self.block_queue[0][&#39;sender&#39;])
+                self.block_queue.pop(0)
+                counter += 1
+            else:
+                sleep(0.1)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="ilpcoin.verifier.server.Server" href="server.html#ilpcoin.verifier.server.Server">Server</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="ilpcoin.verifier.verifier.Verifier.advertise_block"><code class="name flex">
+<span>def <span class="ident">advertise_block</span></span>(<span>self, b: <a title="ilpcoin.common.blockchain.Block" href="../common/blockchain.html#ilpcoin.common.blockchain.Block">Block</a>, sender: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Avertise block b to every known neighbor.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def advertise_block(self, b: Block, sender:int):
+    &#39;&#39;&#39;Avertise block b to every known neighbor.&#39;&#39;&#39;
+    headers = {&#34;Content-Type&#34;:&#34;application/binary&#34;,}
+    if self.testing:
+        return 
+    for i in self.neighbors:
+        if i != sender:
+            url = f&#34;http://{HOST}:{PORT + int(i)}/send_block/{self.id}&#34; 
+            r = requests.put(url, data=b.serialize(),headers=headers)
+            logging.debug(f&#34;Advertised block to neighbor {i}&#34;)</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.verifier.verifier.Verifier.get_blockchain"><code class="name flex">
+<span>def <span class="ident">get_blockchain</span></span>(<span>self) ‑> Optional[<a title="ilpcoin.common.blockchain.Blockchain" href="../common/blockchain.html#ilpcoin.common.blockchain.Blockchain">Blockchain</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Query neighbors to find the most up-to-date blockchain.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_blockchain(self) -&gt; Optional[Blockchain]:
+    &#39;&#39;&#39;Query neighbors to find the most up-to-date blockchain.&#39;&#39;&#39;
+    if not self.testing:
+        longest_chain = -1
+        longest_neighbor = 0
+
+        # figure out who has the longest fork
+        for i in self.neighbors:
+            r = requests.get(&#34;http://&#34; + HOST + &#34;:&#34; + str(PORT + int(i)) + &#34;/get_length&#34;)
+            if int(r.content) &gt; longest_chain:
+                longest_chain = int(r.content)
+                longest_neighbor = i
+        
+        logging.debug(f&#34;Grabbing blockchain from neighbor id {longest_neighbor}&#34;)
+        # grab their chain
+        if longest_neighbor == 0:
+            return Blockchain([])
+        else:
+            r = requests.get(&#34;http://&#34; + HOST + &#34;:&#34; + str(PORT + longest_neighbor) + &#34;/get_blockchain&#34;)
+            return Blockchain.deserialize(r.content)
+    else:
+        return Blockchain(blocks=[])</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.verifier.verifier.Verifier.get_neighbors"><code class="name flex">
+<span>def <span class="ident">get_neighbors</span></span>(<span>self, id) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Query the Ilp queue for a set of 5 neighbors that can be used to gossip new blocks. </p>
+<p>Called on initialization.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_neighbors(self, id) -&gt; None:
+    &#39;&#39;&#39;Query the Ilp queue for a set of 5 neighbors that can be used to gossip new blocks. 
+    
+    Called on initialization. 
+    &#39;&#39;&#39;
+    if not self.testing:
+        r = requests.get(&#34;http://&#34; + QUEUE_HOST + &#34;:&#34; + str(QUEUE_PORT) + &#34;/get_neighbors/5&#34;)
+        self.neighbors = pickle.loads(r.content)
+        self.neighbors = [int(el) for el in self.neighbors]
+        if id in self.neighbors:
+            self.neighbors.remove(id)
+        logging.debug(f&#34;Recieved {len(self.neighbors)} neighbors from queue&#34;)
+    else:
+        self.neighbors: List[int] = [1, 2]</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.verifier.verifier.Verifier.process_new_block"><code class="name flex">
+<span>def <span class="ident">process_new_block</span></span>(<span>self, b: <a title="ilpcoin.common.blockchain.Block" href="../common/blockchain.html#ilpcoin.common.blockchain.Block">Block</a>, sender: int) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Verify that a new latest block, b, is valid, and add it to the blockchain on success.</p>
+<p>Also informs the queue of the newly verified block, so that the queue can progress to the next Ilp once enough
+verifiers have solved it.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_new_block(self, b: Block, sender:int) -&gt; str:
+    &#39;&#39;&#39;Verify that a new latest block, b, is valid, and add it to the blockchain on success.
+    
+    Also informs the queue of the newly verified block, so that the queue can progress to the next Ilp once enough
+    verifiers have solved it.&#39;&#39;&#39;
+    response = SUCCESS
+
+    # validate the transactions in the block
+    valid = b.transactions[0].amount &lt; REWARD
+    l = self.blockchain.get_len()
+
+    # start from index 1 to skip the mining reward
+    # may eventually want to optimize this 
+    for i in range(1, len(b.transactions)):
+        t = b.transactions[i]
+        if not self.blockchain.verify_transaction(t, l, i):
+            logging.debug(f&#34;Found an invalid transaction at index {i}&#34;)
+            response = INVALID_TRANSACTION
+            break
+    
+    # validate static components - nonce, previous_hash, proof of work
+    if not self.blockchain.get_top():
+        logging.debug(&#34;top of the chain is None&#34;)
+    if not b.validate_block(self.blockchain.get_top(), HARDNESS):
+        response = INVALID_NONCE_OR_POW
+        logging.debug(f&#34;Found invalid nonce or proof of work&#34;)
+    
+    # add this block on the queue of stuff to be advertised
+    if response == SUCCESS:
+        logging.debug(&#34;Block has been verified successfully&#34;)
+        self.blockchain.add_block(b)
+        self.block_queue.append({&#34;block&#34;:b, &#34;sender&#34;:sender})
+        # tell the queue that we verified a solution
+        r = requests.get(&#34;http://&#34; + QUEUE_HOST + &#34;:&#34; + str(QUEUE_PORT) + &#34;/&#34; + &#39;verify_ilp/&#39; + str(b.ILP))
+    return response</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.verifier.verifier.Verifier.run"><code class="name flex">
+<span>def <span class="ident">run</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Run the block advertising routine indefinitely. </p>
+<p>We want advertising to be concurrent to request processing else we risk system wide deadlock</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run(self):
+    &#39;&#39;&#39;Run the block advertising routine indefinitely. 
+    
+    We want advertising to be concurrent to request processing else we risk system wide deadlock
+    &#39;&#39;&#39;
+
+    counter = 0
+
+    while True:
+        if self.block_queue != []:
+            logging.debug(f&#34;About to advertise my {counter}th block&#34;)
+            self.advertise_block(self.block_queue[0][&#39;block&#39;], self.block_queue[0][&#39;sender&#39;])
+            self.block_queue.pop(0)
+            counter += 1
+        else:
+            sleep(0.1)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="ilpcoin.verifier.server.Server" href="server.html#ilpcoin.verifier.server.Server">Server</a></b></code>:
+<ul class="hlist">
+<li><code><a title="ilpcoin.verifier.server.Server.set_blockchain" href="server.html#ilpcoin.verifier.server.Server.set_blockchain">set_blockchain</a></code></li>
+<li><code><a title="ilpcoin.verifier.server.Server.start" href="server.html#ilpcoin.verifier.server.Server.start">start</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="ilpcoin.verifier" href="index.html">ilpcoin.verifier</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="ilpcoin.verifier.verifier.Verifier" href="#ilpcoin.verifier.verifier.Verifier">Verifier</a></code></h4>
+<ul class="">
+<li><code><a title="ilpcoin.verifier.verifier.Verifier.advertise_block" href="#ilpcoin.verifier.verifier.Verifier.advertise_block">advertise_block</a></code></li>
+<li><code><a title="ilpcoin.verifier.verifier.Verifier.get_blockchain" href="#ilpcoin.verifier.verifier.Verifier.get_blockchain">get_blockchain</a></code></li>
+<li><code><a title="ilpcoin.verifier.verifier.Verifier.get_neighbors" href="#ilpcoin.verifier.verifier.Verifier.get_neighbors">get_neighbors</a></code></li>
+<li><code><a title="ilpcoin.verifier.verifier.Verifier.process_new_block" href="#ilpcoin.verifier.verifier.Verifier.process_new_block">process_new_block</a></code></li>
+<li><code><a title="ilpcoin.verifier.verifier.Verifier.run" href="#ilpcoin.verifier.verifier.Verifier.run">run</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

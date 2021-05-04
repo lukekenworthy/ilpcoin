@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>ilpcoin.verifier.server API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>ilpcoin.verifier.server</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!usr/bin/env python3
+
+from pickle import bytes_types
+from typing import Optional
+from flask import Flask, request
+from ilpcoin.common.blockchain import Block, Blockchain, Transaction
+import threading
+import logging
+from ilpcoin.common.constants import *
+# import ilpcoin.verifier.__main__ as main
+
+class Server:
+
+    &#39;&#39;&#39;
+    The server class represents a basic participant in the blockchain. It can be extended by purpose-specific members of the chain, such as verifiers. 
+
+    A server has an id on the network, an associated version of the blockchain, and exposes various endpoints for other participants to interact with it. 
+
+    Attributes
+    ----------
+    id : int
+        The id of this verifier. Globally unique. 
+    host : str
+        The ip where this verifier is hosted. Defaults to &#39;localhost&#39;
+    port : int
+        The port where this verifier is hosted. 
+    testing : bool 
+        Testing mode enabled? Set to false unless working with the unit testing suite. 
+    blockchain : Blockchain 
+        This server&#39;s view of the blockchain
+    blocks_to_verify : List[Block]
+        The set of blocks that have not yet been verified
+    &#34;&#34;&#34;
+    
+    &#39;&#39;&#39;
+    def __init__(self, id: int, b: Optional[Blockchain], host: str=&#34;localhost&#34;,
+        port: int=8000, testing: bool=False):
+        &#39;&#39;&#39;Initialize a new verifier.&#39;&#39;&#39;
+        self.id: int = id
+        self.host: str = host
+        self.port: str = str(port+id)
+        self.testing: bool = testing
+
+        self.blockchain = b
+
+        # collection of unverified blocks
+        self.blocks_to_verify = []
+        self.new_block: int = 0
+
+        logging.debug(f&#34;Initializing server host {host} port {self.port} id {self.id} testing {self.testing}&#34;)
+
+    def set_blockchain(self, b:Blockchain):
+        &#39;&#39;&#39;Reset the blockchain representation if necessary.&#39;&#39;&#39;
+        self.blockchain = b
+
+    def start(self):
+        &#39;&#39;&#39;Start the server on a new thread.&#39;&#39;&#39;
+        logging.debug(&#34;Starting server&#34;)
+        threading.Thread(target=app.run, kwargs={&#34;debug&#34;:False, &#34;host&#34;:self.host, &#34;port&#34;:self.port, &#34;threaded&#34;:True}).start()
+
+app = Flask(__name__)
+
+@app.route(&#39;/send_block/&lt;sender&gt;&#39;, methods=[&#39;POST&#39;, &#39;PUT&#39;])
+def get_block(sender) -&gt; str:
+    &#39;&#39;&#39;Receive and process a serialized block
+    
+    Miners use this to send mined blocks and verifiers use it to send verified blocks. 
+    The block sent should always be the top of the blockchain.
+    &#39;&#39;&#39;
+
+    block: Block = Block.deserialize(request.get_data())
+    r = main.verifier.process_new_block(block, int(sender))
+    logging.debug(f&#34;Processed block and responded {r}&#34;)
+    return r
+
+@app.route(&#39;/get_blockchain&#39;, methods=[&#39;GET&#39;])
+def give_blockchain():
+    &#39;&#39;&#39;Return a serialized copy of the entire blockchain. 
+    
+    This is used by other verifiers on initialization to discover the current state 
+    of the blockchain. 
+    &#39;&#39;&#39;
+    logging.debug(&#34;Giving blockchain &#34; + str(main.verifier.blockchain.serialize()))
+    return main.verifier.blockchain.serialize()
+
+@app.route(&#39;/get_previous&#39;, methods=[&#39;GET&#39;])
+def get_previous():
+    &#39;&#39;&#39;
+    Return the previous block serialized, which miners need to hash and insert into subsequent blocks.
+    &#39;&#39;&#39;
+    b = main.verifier.blockchain.get_top()
+    if not b:
+        return EMPTY_CHAIN
+    logging.debug(&#34;Giving previous&#34;)
+    return b.serialize()
+
+@app.route(&#39;/get_length&#39;, methods=[&#39;GET&#39;])
+def get_length():
+    &#39;&#39;&#39;Returns the number of blocks in this server&#39;s version of the blockchain. 
+    
+    Used by other verifiers to determine if they&#39;re on the correct fork. 
+    &#39;&#39;&#39;
+    logging.debug(&#34;Giving length &#34; + str(main.verifier.blockchain.get_len()))
+    return str(main.verifier.blockchain.get_len())
+
+@app.route(&#39;/get_value_by_user/&lt;username&gt;&#39;, methods=[&#39;GET&#39;])
+def get_value_by_user(username):
+    &#39;&#39;&#39;Query the blockchain to find out the current balance of `username`&#39;s account. 
+    
+    In current implementation, will replay the entire blockchain.&#39;&#39;&#39;
+    l = main.verifier.blockchain.get_len()
+    return str(main.verifier.blockchain.get_value_by_user(username, l, BLOCKSIZE))
+
+@app.route(&#39;/get_ilp_solution/&lt;id&gt;&#39;, methods=[&#39;GET&#39;])
+def get_ilp_solution(id):
+    &#39;&#39;&#39;Query the blockchain for solution with id `id`. 
+    
+    Used by the queue to return solutions to customers.
+    &#39;&#39;&#39;
+    l = main.verifier.blockchain.get_solution_by_id(id)
+    if l: 
+        return l.serialize_s() 
+    else: 
+        return ILP_NOT_FOUND </code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="ilpcoin.verifier.server.get_block"><code class="name flex">
+<span>def <span class="ident">get_block</span></span>(<span>sender) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Receive and process a serialized block</p>
+<p>Miners use this to send mined blocks and verifiers use it to send verified blocks.
+The block sent should always be the top of the blockchain.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.route(&#39;/send_block/&lt;sender&gt;&#39;, methods=[&#39;POST&#39;, &#39;PUT&#39;])
+def get_block(sender) -&gt; str:
+    &#39;&#39;&#39;Receive and process a serialized block
+    
+    Miners use this to send mined blocks and verifiers use it to send verified blocks. 
+    The block sent should always be the top of the blockchain.
+    &#39;&#39;&#39;
+
+    block: Block = Block.deserialize(request.get_data())
+    r = main.verifier.process_new_block(block, int(sender))
+    logging.debug(f&#34;Processed block and responded {r}&#34;)
+    return r</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.verifier.server.get_ilp_solution"><code class="name flex">
+<span>def <span class="ident">get_ilp_solution</span></span>(<span>id)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Query the blockchain for solution with id <code>id</code>. </p>
+<p>Used by the queue to return solutions to customers.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.route(&#39;/get_ilp_solution/&lt;id&gt;&#39;, methods=[&#39;GET&#39;])
+def get_ilp_solution(id):
+    &#39;&#39;&#39;Query the blockchain for solution with id `id`. 
+    
+    Used by the queue to return solutions to customers.
+    &#39;&#39;&#39;
+    l = main.verifier.blockchain.get_solution_by_id(id)
+    if l: 
+        return l.serialize_s() 
+    else: 
+        return ILP_NOT_FOUND </code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.verifier.server.get_length"><code class="name flex">
+<span>def <span class="ident">get_length</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns the number of blocks in this server's version of the blockchain. </p>
+<p>Used by other verifiers to determine if they're on the correct fork.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.route(&#39;/get_length&#39;, methods=[&#39;GET&#39;])
+def get_length():
+    &#39;&#39;&#39;Returns the number of blocks in this server&#39;s version of the blockchain. 
+    
+    Used by other verifiers to determine if they&#39;re on the correct fork. 
+    &#39;&#39;&#39;
+    logging.debug(&#34;Giving length &#34; + str(main.verifier.blockchain.get_len()))
+    return str(main.verifier.blockchain.get_len())</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.verifier.server.get_previous"><code class="name flex">
+<span>def <span class="ident">get_previous</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the previous block serialized, which miners need to hash and insert into subsequent blocks.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.route(&#39;/get_previous&#39;, methods=[&#39;GET&#39;])
+def get_previous():
+    &#39;&#39;&#39;
+    Return the previous block serialized, which miners need to hash and insert into subsequent blocks.
+    &#39;&#39;&#39;
+    b = main.verifier.blockchain.get_top()
+    if not b:
+        return EMPTY_CHAIN
+    logging.debug(&#34;Giving previous&#34;)
+    return b.serialize()</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.verifier.server.get_value_by_user"><code class="name flex">
+<span>def <span class="ident">get_value_by_user</span></span>(<span>username)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Query the blockchain to find out the current balance of <code>username</code>'s account. </p>
+<p>In current implementation, will replay the entire blockchain.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.route(&#39;/get_value_by_user/&lt;username&gt;&#39;, methods=[&#39;GET&#39;])
+def get_value_by_user(username):
+    &#39;&#39;&#39;Query the blockchain to find out the current balance of `username`&#39;s account. 
+    
+    In current implementation, will replay the entire blockchain.&#39;&#39;&#39;
+    l = main.verifier.blockchain.get_len()
+    return str(main.verifier.blockchain.get_value_by_user(username, l, BLOCKSIZE))</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.verifier.server.give_blockchain"><code class="name flex">
+<span>def <span class="ident">give_blockchain</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a serialized copy of the entire blockchain. </p>
+<p>This is used by other verifiers on initialization to discover the current state
+of the blockchain.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.route(&#39;/get_blockchain&#39;, methods=[&#39;GET&#39;])
+def give_blockchain():
+    &#39;&#39;&#39;Return a serialized copy of the entire blockchain. 
+    
+    This is used by other verifiers on initialization to discover the current state 
+    of the blockchain. 
+    &#39;&#39;&#39;
+    logging.debug(&#34;Giving blockchain &#34; + str(main.verifier.blockchain.serialize()))
+    return main.verifier.blockchain.serialize()</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="ilpcoin.verifier.server.Server"><code class="flex name class">
+<span>class <span class="ident">Server</span></span>
+<span>(</span><span>id: int, b: Optional[<a title="ilpcoin.common.blockchain.Blockchain" href="../common/blockchain.html#ilpcoin.common.blockchain.Blockchain">Blockchain</a>], host: str = 'localhost', port: int = 8000, testing: bool = False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The server class represents a basic participant in the blockchain. It can be extended by purpose-specific members of the chain, such as verifiers. </p>
+<p>A server has an id on the network, an associated version of the blockchain, and exposes various endpoints for other participants to interact with it. </p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>id</code></strong> :&ensp;<code>int</code></dt>
+<dd>The id of this verifier. Globally unique.</dd>
+<dt><strong><code>host</code></strong> :&ensp;<code>str</code></dt>
+<dd>The ip where this verifier is hosted. Defaults to 'localhost'</dd>
+<dt><strong><code>port</code></strong> :&ensp;<code>int</code></dt>
+<dd>The port where this verifier is hosted.</dd>
+<dt><strong><code>testing</code></strong> :&ensp;<code>bool </code></dt>
+<dd>Testing mode enabled? Set to false unless working with the unit testing suite.</dd>
+<dt><strong><code>blockchain</code></strong> :&ensp;<code>Blockchain </code></dt>
+<dd>This server's view of the blockchain</dd>
+<dt><strong><code>blocks_to_verify</code></strong> :&ensp;<code>List[Block]</code></dt>
+<dd>The set of blocks that have not yet been verified</dd>
+</dl>
+<p>"""</p>
+<p>Initialize a new verifier.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Server:
+
+    &#39;&#39;&#39;
+    The server class represents a basic participant in the blockchain. It can be extended by purpose-specific members of the chain, such as verifiers. 
+
+    A server has an id on the network, an associated version of the blockchain, and exposes various endpoints for other participants to interact with it. 
+
+    Attributes
+    ----------
+    id : int
+        The id of this verifier. Globally unique. 
+    host : str
+        The ip where this verifier is hosted. Defaults to &#39;localhost&#39;
+    port : int
+        The port where this verifier is hosted. 
+    testing : bool 
+        Testing mode enabled? Set to false unless working with the unit testing suite. 
+    blockchain : Blockchain 
+        This server&#39;s view of the blockchain
+    blocks_to_verify : List[Block]
+        The set of blocks that have not yet been verified
+    &#34;&#34;&#34;
+    
+    &#39;&#39;&#39;
+    def __init__(self, id: int, b: Optional[Blockchain], host: str=&#34;localhost&#34;,
+        port: int=8000, testing: bool=False):
+        &#39;&#39;&#39;Initialize a new verifier.&#39;&#39;&#39;
+        self.id: int = id
+        self.host: str = host
+        self.port: str = str(port+id)
+        self.testing: bool = testing
+
+        self.blockchain = b
+
+        # collection of unverified blocks
+        self.blocks_to_verify = []
+        self.new_block: int = 0
+
+        logging.debug(f&#34;Initializing server host {host} port {self.port} id {self.id} testing {self.testing}&#34;)
+
+    def set_blockchain(self, b:Blockchain):
+        &#39;&#39;&#39;Reset the blockchain representation if necessary.&#39;&#39;&#39;
+        self.blockchain = b
+
+    def start(self):
+        &#39;&#39;&#39;Start the server on a new thread.&#39;&#39;&#39;
+        logging.debug(&#34;Starting server&#34;)
+        threading.Thread(target=app.run, kwargs={&#34;debug&#34;:False, &#34;host&#34;:self.host, &#34;port&#34;:self.port, &#34;threaded&#34;:True}).start()</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="ilpcoin.verifier.verifier.Verifier" href="verifier.html#ilpcoin.verifier.verifier.Verifier">Verifier</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="ilpcoin.verifier.server.Server.set_blockchain"><code class="name flex">
+<span>def <span class="ident">set_blockchain</span></span>(<span>self, b: <a title="ilpcoin.common.blockchain.Blockchain" href="../common/blockchain.html#ilpcoin.common.blockchain.Blockchain">Blockchain</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reset the blockchain representation if necessary.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_blockchain(self, b:Blockchain):
+    &#39;&#39;&#39;Reset the blockchain representation if necessary.&#39;&#39;&#39;
+    self.blockchain = b</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.verifier.server.Server.start"><code class="name flex">
+<span>def <span class="ident">start</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Start the server on a new thread.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def start(self):
+    &#39;&#39;&#39;Start the server on a new thread.&#39;&#39;&#39;
+    logging.debug(&#34;Starting server&#34;)
+    threading.Thread(target=app.run, kwargs={&#34;debug&#34;:False, &#34;host&#34;:self.host, &#34;port&#34;:self.port, &#34;threaded&#34;:True}).start()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="ilpcoin.verifier" href="index.html">ilpcoin.verifier</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="ilpcoin.verifier.server.get_block" href="#ilpcoin.verifier.server.get_block">get_block</a></code></li>
+<li><code><a title="ilpcoin.verifier.server.get_ilp_solution" href="#ilpcoin.verifier.server.get_ilp_solution">get_ilp_solution</a></code></li>
+<li><code><a title="ilpcoin.verifier.server.get_length" href="#ilpcoin.verifier.server.get_length">get_length</a></code></li>
+<li><code><a title="ilpcoin.verifier.server.get_previous" href="#ilpcoin.verifier.server.get_previous">get_previous</a></code></li>
+<li><code><a title="ilpcoin.verifier.server.get_value_by_user" href="#ilpcoin.verifier.server.get_value_by_user">get_value_by_user</a></code></li>
+<li><code><a title="ilpcoin.verifier.server.give_blockchain" href="#ilpcoin.verifier.server.give_blockchain">give_blockchain</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="ilpcoin.verifier.server.Server" href="#ilpcoin.verifier.server.Server">Server</a></code></h4>
+<ul class="">
+<li><code><a title="ilpcoin.verifier.server.Server.set_blockchain" href="#ilpcoin.verifier.server.Server.set_blockchain">set_blockchain</a></code></li>
+<li><code><a title="ilpcoin.verifier.server.Server.start" href="#ilpcoin.verifier.server.Server.start">start</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
