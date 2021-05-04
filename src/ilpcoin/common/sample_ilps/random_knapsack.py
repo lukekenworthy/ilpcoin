@@ -3,7 +3,7 @@ from mip import Model, xsum, maximize, BINARY, minimize
 from ilpcoin.common.ilp import Ilp
 import random
 
-def random_knapsack(): 
+def random_knapsack(hardness:int): 
     """Return a knapsack Ilp with random weights and values.
     
     Return an instance of our custom ILP class representing 
@@ -11,8 +11,8 @@ def random_knapsack():
     a value of k = 40.
     """
     # constants 
-    p = [random.randint(0,35) for x in range(6)]
-    w = [random.randint(0,35) for x in range(6)]
+    p = [random.randint(0,35) for x in range(hardness)]
+    w = [random.randint(0,35) for x in range(hardness)]
     c, I = 47, range(len(w))
 
     m = Model("knapsack")
