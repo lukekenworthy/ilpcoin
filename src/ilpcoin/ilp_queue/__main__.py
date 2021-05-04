@@ -28,7 +28,7 @@ def main():
     for handler in logging.root.handlers[:]:
         logging.root.removeHandler(handler)
     
-    logging.basicConfig(filename='logs/queue.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+    logging.basicConfig(filename='logs/queue.log', filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
     logging.basicConfig(level=logging.DEBUG)
 
     # Specify verifiers needed

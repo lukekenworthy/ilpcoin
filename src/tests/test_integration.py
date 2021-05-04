@@ -89,7 +89,7 @@ class IntegrationTestsStandard(unittest.TestCase):
             self.assertTrue(contents.find("GET /get_top_ilp") != -1)
 
             # two verifiers should try to verify an ILP
-            self.assertGreaterEqual(contents.find("Looking up ilp with id: 1"), 2)
+            self.assertGreaterEqual(contents.count("Looking up ilp with id: 1"), 2)
 
             # first ILP should get popped off
             self.assertTrue(contents.find("Ilp with id 1 is popped from queue.") != -1)
