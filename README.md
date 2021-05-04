@@ -24,3 +24,7 @@ To run the test suite (all files beginning matching `test_<module_name>.py`), ru
 pytest
 ```
 in the root directory.
+
+## Documentation
+
+See `docs/` for complete documentation and API reference. 

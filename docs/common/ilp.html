@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>ilpcoin.common.ilp API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>ilpcoin.common.ilp</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!usr/bin/env python3
+
+from typing import Optional
+import mip
+import pickle
+import tempfile
+
+from ilpcoin.common.constants import ILP_NOT_FOUND
+
+class IlpSolution:
+    &#34;&#34;&#34;
+    A class to represent a solution to an ILP.
+
+    Attributes
+    ----------
+    ilp_id : int
+        The id of the ilp for which this object is a solution
+    no_solution : bool
+        Set to `True` if this solution represents the fact
+        that the associated Ilp has been proven to have no solution
+    variable_results : Dict[string: float]
+        A dictionary associating each variable to its value in the solution
+        by its python-mip generated name.
+    &#34;&#34;&#34;
+
+    def __init__(self, solved_ilp : &#39;Ilp&#39;, status=mip.OptimizationStatus.OPTIMAL):
+        &#39;&#39;&#39;Constructs an IlpSolution from a solved Ilp.
+
+        Parameters
+        ----------    
+        solved_ilp : Ilp
+            The Ilp instance, already solved with the .solve() method.
+        
+        status : mip.OptimizationStatus 
+            The exit status from solved_ilp&#39;s internal mip solve.
+        &#39;&#39;&#39;
+
+        self.ilp_id = solved_ilp.uid
+
+        # No solution is set when the ilp has been proven to have no solution.
+        self.no_solution = status == mip.OptimizationStatus.INFEASIBLE
+        
+        self.variable_results = {v.name : v.x for v in solved_ilp.mip_ilp.vars}
+
+    @classmethod
+    def deserialize(cls, raw_bytes : bytes):
+        &#39;&#39;&#39;Create an ilp_solution from raw_bytes&#39;&#39;&#39;
+        return pickle.loads(raw_bytes)
+
+    def serialize(self) -&gt; bytes:
+        &#39;&#39;&#39;Convert this ilp_solution to bytes&#39;&#39;&#39;
+        return pickle.dumps(self)
+
+    def serialize_s(self) -&gt; str:
+        &#39;&#39;&#39;Convert this IlpSolution to a hex string, when more convenient than raw bytes.&#39;&#39;&#39;
+        return self.serialize().hex()
+
+    @classmethod
+    def deserialize_s(cls, hex_string : str):
+        &#39;&#39;&#39;Convert the hex string representation of this solution to an IlpSolution&#39;&#39;&#39;
+        return cls.deserialize(bytes.fromhex(hex_string))
+
+    def __eq__(self, other):
+        try: 
+            return self.ilp_id == other.ilp_id and self.no_solution == other.no_solution and self.variable_results == other.variable_results
+        except: 
+            return False
+
+
+class _SerializableIlp:
+    # Contains the subset of the state from the more complex Ilp class that we want to serialize and send around
+    # Internal to this module. Never manually instantiate or use. 
+    
+    # Create these from full-blown Ilp objects
+    def __init__(self, full_ilp : &#39;Ilp&#39;):
+        # We need temp files to use mip&#39;s built in serialization; this is an ugly hack
+        with  open(&#34;temp_serialize_file.lp&#34;, &#34;w+&#34;) as tempOutputFile:
+            full_ilp.mip_ilp.write(tempOutputFile.name)
+            self.serialized_ilp = tempOutputFile.read()
+            self.uid = full_ilp.uid
+            self.k = full_ilp.k
+            self.maximuze = full_ilp.maximize
+
+    # Convert back to a full ilp.
+    # Any solution progress will be lost.
+    def to_full_ilp(self) -&gt; &#39;Ilp&#39;:
+        with open(&#34;temp_deserialize_file.lp&#34;, &#34;w+&#34;) as tempOutputFile:
+            tempOutputFile.write(self.serialized_ilp)
+            deserialized_ilp = mip.Model()
+        deserialized_ilp.read(&#34;temp_deserialize_file.lp&#34;)
+        return Ilp(deserialized_ilp, self.k, self.uid)
+        
+
+class Ilp:
+    &#39;&#39;&#39;
+    Universal representation of a decision-problem ILP for all of ilpcoin.
+
+    Attributes
+    ----------
+    mip_ilp : mip.Model
+        The internal mip model that this ilp object represents. 
+        Much of this class&#39;s functionality just passes through to this internal object.
+    uid : int
+        A globally unique ID for this ilp, set by the queue. Initialized to -1 on construction. 
+    k : float
+        The threshold above (if a maximization problem) or below (if minimization) that the objective function
+        must evalute to for a set of values for each variable to be considered a solution to this Ilp.
+    maximize : bool
+        Is this a maximization problem? Minimization if false. 
+    &#39;&#39;&#39;
+
+    def __init__(self, mip_ilp : mip.Model, k : float, uid : int = -1, maximize = False):
+        &#39;&#39;&#39;Create a decision Ilp from a mip model.&#39;&#39;&#39;
+        self.mip_ilp = mip_ilp
+        self.uid = uid
+        self.k = k
+        self.maximize = maximize
+
+    def set_id(self, uid: int) -&gt; None:
+        &#39;&#39;&#39;Set this Ilp&#39;s system wide UID. Normally the queue does this when it is added by a client. &#39;&#39;&#39;
+        self.uid = uid
+
+    def get_id(self) -&gt; int:
+        &#39;&#39;&#39;Return the Ilp&#39;s global UID&#39;&#39;&#39;
+        return self.uid
+ 
+    def solve(self, max_time = 300) -&gt; Optional[IlpSolution]:
+        &#39;&#39;&#39;Try to solve for up to max_time seconds and return an IlpSolution object. See IlpSolution documentation for details
+        
+        Makes use of the mip library&#39;s internal solving tools.
+        &#39;&#39;&#39;
+        status = self.mip_ilp.optimize(max_seconds = max_time)
+
+        # Solution can be infeasible (no solution) or the actual solution. 
+        if (status == mip.OptimizationStatus.INFEASIBLE or status == mip.OptimizationStatus.OPTIMAL):
+            return IlpSolution(self, mip.OptimizationStatus.INFEASIBLE )
+        else:
+            # No solution found in time. 
+            return None
+
+
+    def serialize(self) -&gt; bytes:
+        &#39;&#39;&#39;Serialize ilp to bytes. 
+
+        Preserves information about the ilp problem, but not any of the solving machinery 
+        or any solutions stored internally.    
+        &#39;&#39;&#39;
+        return pickle.dumps(_SerializableIlp(self))
+
+    def serialize_s(self) -&gt; str:
+        &#39;&#39;&#39;Serialize ilp to hex string, when more convenient than raw bytes. 
+
+        Preserves information about the ilp problem, but not any of the solving machinery 
+        or any solutions stored internally.    
+        &#39;&#39;&#39;
+        return self.serialize().hex()
+
+    @classmethod
+    def deserialize(cls, raw_bytes : bytes) -&gt; &#39;Ilp&#39;:
+        &#39;&#39;&#39;Deserialize an ilp from raw_bytes
+        
+        Inverse of `serialize` above.
+        &#39;&#39;&#39;
+        return pickle.loads(raw_bytes).to_full_ilp()
+
+    @classmethod
+    def deserialize_s(cls, hex_string : str) -&gt; &#39;Ilp&#39;:
+        &#39;&#39;&#39;Deserialize an ilp from hex_string
+        
+        Inverse of `serialize)s` above.
+        &#39;&#39;&#39;
+        return cls.deserialize(bytes.fromhex(hex_string))
+
+    # Internal use only, as part of check
+    def __eval_objective_function(self, solution):
+        objective_function = self.mip_ilp.objective
+        res = objective_function.const
+        for v, coeff in self.mip_ilp.objective.expr.items():
+            v_value = solution.variable_results[v.name]
+            res += v_value * coeff
+
+        return res
+
+    def check(self, solution : IlpSolution) -&gt; bool:
+        &#39;&#39;&#39;Return true iff solution&#39;s variables solve this decision Ilp&#39;&#39;&#39;
+        try:             
+            
+            # The solution isn&#39;t for this ilp. 
+            # if solution.ilp_id != self.uid: 
+            #     return False
+
+            solution_value = self.__eval_objective_function(solution)
+            return float(solution_value) &gt; self.k if self.maximize else solution_value &lt; self.k 
+        except: 
+            # If we can&#39;t check it, it&#39;s not a solution. 
+            return False</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="ilpcoin.common.ilp.Ilp"><code class="flex name class">
+<span>class <span class="ident">Ilp</span></span>
+<span>(</span><span>mip_ilp: mip.model.Model, k: float, uid: int = -1, maximize=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Universal representation of a decision-problem ILP for all of ilpcoin.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>mip_ilp</code></strong> :&ensp;<code>mip.Model</code></dt>
+<dd>The internal mip model that this ilp object represents.
+Much of this class's functionality just passes through to this internal object.</dd>
+<dt><strong><code>uid</code></strong> :&ensp;<code>int</code></dt>
+<dd>A globally unique ID for this ilp, set by the queue. Initialized to -1 on construction.</dd>
+<dt><strong><code>k</code></strong> :&ensp;<code>float</code></dt>
+<dd>The threshold above (if a maximization problem) or below (if minimization) that the objective function
+must evalute to for a set of values for each variable to be considered a solution to this Ilp.</dd>
+<dt><strong><code>maximize</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Is this a maximization problem? Minimization if false.</dd>
+</dl>
+<p>Create a decision Ilp from a mip model.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Ilp:
+    &#39;&#39;&#39;
+    Universal representation of a decision-problem ILP for all of ilpcoin.
+
+    Attributes
+    ----------
+    mip_ilp : mip.Model
+        The internal mip model that this ilp object represents. 
+        Much of this class&#39;s functionality just passes through to this internal object.
+    uid : int
+        A globally unique ID for this ilp, set by the queue. Initialized to -1 on construction. 
+    k : float
+        The threshold above (if a maximization problem) or below (if minimization) that the objective function
+        must evalute to for a set of values for each variable to be considered a solution to this Ilp.
+    maximize : bool
+        Is this a maximization problem? Minimization if false. 
+    &#39;&#39;&#39;
+
+    def __init__(self, mip_ilp : mip.Model, k : float, uid : int = -1, maximize = False):
+        &#39;&#39;&#39;Create a decision Ilp from a mip model.&#39;&#39;&#39;
+        self.mip_ilp = mip_ilp
+        self.uid = uid
+        self.k = k
+        self.maximize = maximize
+
+    def set_id(self, uid: int) -&gt; None:
+        &#39;&#39;&#39;Set this Ilp&#39;s system wide UID. Normally the queue does this when it is added by a client. &#39;&#39;&#39;
+        self.uid = uid
+
+    def get_id(self) -&gt; int:
+        &#39;&#39;&#39;Return the Ilp&#39;s global UID&#39;&#39;&#39;
+        return self.uid
+ 
+    def solve(self, max_time = 300) -&gt; Optional[IlpSolution]:
+        &#39;&#39;&#39;Try to solve for up to max_time seconds and return an IlpSolution object. See IlpSolution documentation for details
+        
+        Makes use of the mip library&#39;s internal solving tools.
+        &#39;&#39;&#39;
+        status = self.mip_ilp.optimize(max_seconds = max_time)
+
+        # Solution can be infeasible (no solution) or the actual solution. 
+        if (status == mip.OptimizationStatus.INFEASIBLE or status == mip.OptimizationStatus.OPTIMAL):
+            return IlpSolution(self, mip.OptimizationStatus.INFEASIBLE )
+        else:
+            # No solution found in time. 
+            return None
+
+
+    def serialize(self) -&gt; bytes:
+        &#39;&#39;&#39;Serialize ilp to bytes. 
+
+        Preserves information about the ilp problem, but not any of the solving machinery 
+        or any solutions stored internally.    
+        &#39;&#39;&#39;
+        return pickle.dumps(_SerializableIlp(self))
+
+    def serialize_s(self) -&gt; str:
+        &#39;&#39;&#39;Serialize ilp to hex string, when more convenient than raw bytes. 
+
+        Preserves information about the ilp problem, but not any of the solving machinery 
+        or any solutions stored internally.    
+        &#39;&#39;&#39;
+        return self.serialize().hex()
+
+    @classmethod
+    def deserialize(cls, raw_bytes : bytes) -&gt; &#39;Ilp&#39;:
+        &#39;&#39;&#39;Deserialize an ilp from raw_bytes
+        
+        Inverse of `serialize` above.
+        &#39;&#39;&#39;
+        return pickle.loads(raw_bytes).to_full_ilp()
+
+    @classmethod
+    def deserialize_s(cls, hex_string : str) -&gt; &#39;Ilp&#39;:
+        &#39;&#39;&#39;Deserialize an ilp from hex_string
+        
+        Inverse of `serialize)s` above.
+        &#39;&#39;&#39;
+        return cls.deserialize(bytes.fromhex(hex_string))
+
+    # Internal use only, as part of check
+    def __eval_objective_function(self, solution):
+        objective_function = self.mip_ilp.objective
+        res = objective_function.const
+        for v, coeff in self.mip_ilp.objective.expr.items():
+            v_value = solution.variable_results[v.name]
+            res += v_value * coeff
+
+        return res
+
+    def check(self, solution : IlpSolution) -&gt; bool:
+        &#39;&#39;&#39;Return true iff solution&#39;s variables solve this decision Ilp&#39;&#39;&#39;
+        try:             
+            
+            # The solution isn&#39;t for this ilp. 
+            # if solution.ilp_id != self.uid: 
+            #     return False
+
+            solution_value = self.__eval_objective_function(solution)
+            return float(solution_value) &gt; self.k if self.maximize else solution_value &lt; self.k 
+        except: 
+            # If we can&#39;t check it, it&#39;s not a solution. 
+            return False</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="ilpcoin.common.ilp.Ilp.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>raw_bytes: bytes) ‑> <a title="ilpcoin.common.ilp.Ilp" href="#ilpcoin.common.ilp.Ilp">Ilp</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Deserialize an ilp from raw_bytes</p>
+<p>Inverse of <code>serialize</code> above.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, raw_bytes : bytes) -&gt; &#39;Ilp&#39;:
+    &#39;&#39;&#39;Deserialize an ilp from raw_bytes
+    
+    Inverse of `serialize` above.
+    &#39;&#39;&#39;
+    return pickle.loads(raw_bytes).to_full_ilp()</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.common.ilp.Ilp.deserialize_s"><code class="name flex">
+<span>def <span class="ident">deserialize_s</span></span>(<span>hex_string: str) ‑> <a title="ilpcoin.common.ilp.Ilp" href="#ilpcoin.common.ilp.Ilp">Ilp</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Deserialize an ilp from hex_string</p>
+<p>Inverse of <code>serialize)s</code> above.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize_s(cls, hex_string : str) -&gt; &#39;Ilp&#39;:
+    &#39;&#39;&#39;Deserialize an ilp from hex_string
+    
+    Inverse of `serialize)s` above.
+    &#39;&#39;&#39;
+    return cls.deserialize(bytes.fromhex(hex_string))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="ilpcoin.common.ilp.Ilp.check"><code class="name flex">
+<span>def <span class="ident">check</span></span>(<span>self, solution: <a title="ilpcoin.common.ilp.IlpSolution" href="#ilpcoin.common.ilp.IlpSolution">IlpSolution</a>) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return true iff solution's variables solve this decision Ilp</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check(self, solution : IlpSolution) -&gt; bool:
+    &#39;&#39;&#39;Return true iff solution&#39;s variables solve this decision Ilp&#39;&#39;&#39;
+    try:             
+        
+        # The solution isn&#39;t for this ilp. 
+        # if solution.ilp_id != self.uid: 
+        #     return False
+
+        solution_value = self.__eval_objective_function(solution)
+        return float(solution_value) &gt; self.k if self.maximize else solution_value &lt; self.k 
+    except: 
+        # If we can&#39;t check it, it&#39;s not a solution. 
+        return False</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.common.ilp.Ilp.get_id"><code class="name flex">
+<span>def <span class="ident">get_id</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the Ilp's global UID</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_id(self) -&gt; int:
+    &#39;&#39;&#39;Return the Ilp&#39;s global UID&#39;&#39;&#39;
+    return self.uid</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.common.ilp.Ilp.serialize"><code class="name flex">
+<span>def <span class="ident">serialize</span></span>(<span>self) ‑> bytes</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Serialize ilp to bytes. </p>
+<p>Preserves information about the ilp problem, but not any of the solving machinery
+or any solutions stored internally.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize(self) -&gt; bytes:
+    &#39;&#39;&#39;Serialize ilp to bytes. 
+
+    Preserves information about the ilp problem, but not any of the solving machinery 
+    or any solutions stored internally.    
+    &#39;&#39;&#39;
+    return pickle.dumps(_SerializableIlp(self))</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.common.ilp.Ilp.serialize_s"><code class="name flex">
+<span>def <span class="ident">serialize_s</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Serialize ilp to hex string, when more convenient than raw bytes. </p>
+<p>Preserves information about the ilp problem, but not any of the solving machinery
+or any solutions stored internally.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize_s(self) -&gt; str:
+    &#39;&#39;&#39;Serialize ilp to hex string, when more convenient than raw bytes. 
+
+    Preserves information about the ilp problem, but not any of the solving machinery 
+    or any solutions stored internally.    
+    &#39;&#39;&#39;
+    return self.serialize().hex()</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.common.ilp.Ilp.set_id"><code class="name flex">
+<span>def <span class="ident">set_id</span></span>(<span>self, uid: int) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set this Ilp's system wide UID. Normally the queue does this when it is added by a client.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_id(self, uid: int) -&gt; None:
+    &#39;&#39;&#39;Set this Ilp&#39;s system wide UID. Normally the queue does this when it is added by a client. &#39;&#39;&#39;
+    self.uid = uid</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.common.ilp.Ilp.solve"><code class="name flex">
+<span>def <span class="ident">solve</span></span>(<span>self, max_time=300) ‑> Optional[<a title="ilpcoin.common.ilp.IlpSolution" href="#ilpcoin.common.ilp.IlpSolution">IlpSolution</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Try to solve for up to max_time seconds and return an IlpSolution object. See IlpSolution documentation for details</p>
+<p>Makes use of the mip library's internal solving tools.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve(self, max_time = 300) -&gt; Optional[IlpSolution]:
+    &#39;&#39;&#39;Try to solve for up to max_time seconds and return an IlpSolution object. See IlpSolution documentation for details
+    
+    Makes use of the mip library&#39;s internal solving tools.
+    &#39;&#39;&#39;
+    status = self.mip_ilp.optimize(max_seconds = max_time)
+
+    # Solution can be infeasible (no solution) or the actual solution. 
+    if (status == mip.OptimizationStatus.INFEASIBLE or status == mip.OptimizationStatus.OPTIMAL):
+        return IlpSolution(self, mip.OptimizationStatus.INFEASIBLE )
+    else:
+        # No solution found in time. 
+        return None</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="ilpcoin.common.ilp.IlpSolution"><code class="flex name class">
+<span>class <span class="ident">IlpSolution</span></span>
+<span>(</span><span>solved_ilp: <a title="ilpcoin.common.ilp.Ilp" href="#ilpcoin.common.ilp.Ilp">Ilp</a>, status=OptimizationStatus.OPTIMAL)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A class to represent a solution to an ILP.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>ilp_id</code></strong> :&ensp;<code>int</code></dt>
+<dd>The id of the ilp for which this object is a solution</dd>
+<dt><strong><code>no_solution</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Set to <code>True</code> if this solution represents the fact
+that the associated Ilp has been proven to have no solution</dd>
+<dt><strong><code>variable_results</code></strong> :&ensp;<code>Dict[string: float]</code></dt>
+<dd>A dictionary associating each variable to its value in the solution
+by its python-mip generated name.</dd>
+</dl>
+<p>Constructs an IlpSolution from a solved Ilp.</p>
+<h2 id="parameters">Parameters</h2>
+<p>solved_ilp : Ilp
+The Ilp instance, already solved with the .solve() method.</p>
+<p>status : mip.OptimizationStatus
+The exit status from solved_ilp's internal mip solve.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IlpSolution:
+    &#34;&#34;&#34;
+    A class to represent a solution to an ILP.
+
+    Attributes
+    ----------
+    ilp_id : int
+        The id of the ilp for which this object is a solution
+    no_solution : bool
+        Set to `True` if this solution represents the fact
+        that the associated Ilp has been proven to have no solution
+    variable_results : Dict[string: float]
+        A dictionary associating each variable to its value in the solution
+        by its python-mip generated name.
+    &#34;&#34;&#34;
+
+    def __init__(self, solved_ilp : &#39;Ilp&#39;, status=mip.OptimizationStatus.OPTIMAL):
+        &#39;&#39;&#39;Constructs an IlpSolution from a solved Ilp.
+
+        Parameters
+        ----------    
+        solved_ilp : Ilp
+            The Ilp instance, already solved with the .solve() method.
+        
+        status : mip.OptimizationStatus 
+            The exit status from solved_ilp&#39;s internal mip solve.
+        &#39;&#39;&#39;
+
+        self.ilp_id = solved_ilp.uid
+
+        # No solution is set when the ilp has been proven to have no solution.
+        self.no_solution = status == mip.OptimizationStatus.INFEASIBLE
+        
+        self.variable_results = {v.name : v.x for v in solved_ilp.mip_ilp.vars}
+
+    @classmethod
+    def deserialize(cls, raw_bytes : bytes):
+        &#39;&#39;&#39;Create an ilp_solution from raw_bytes&#39;&#39;&#39;
+        return pickle.loads(raw_bytes)
+
+    def serialize(self) -&gt; bytes:
+        &#39;&#39;&#39;Convert this ilp_solution to bytes&#39;&#39;&#39;
+        return pickle.dumps(self)
+
+    def serialize_s(self) -&gt; str:
+        &#39;&#39;&#39;Convert this IlpSolution to a hex string, when more convenient than raw bytes.&#39;&#39;&#39;
+        return self.serialize().hex()
+
+    @classmethod
+    def deserialize_s(cls, hex_string : str):
+        &#39;&#39;&#39;Convert the hex string representation of this solution to an IlpSolution&#39;&#39;&#39;
+        return cls.deserialize(bytes.fromhex(hex_string))
+
+    def __eq__(self, other):
+        try: 
+            return self.ilp_id == other.ilp_id and self.no_solution == other.no_solution and self.variable_results == other.variable_results
+        except: 
+            return False</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="ilpcoin.common.ilp.IlpSolution.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>raw_bytes: bytes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create an ilp_solution from raw_bytes</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, raw_bytes : bytes):
+    &#39;&#39;&#39;Create an ilp_solution from raw_bytes&#39;&#39;&#39;
+    return pickle.loads(raw_bytes)</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.common.ilp.IlpSolution.deserialize_s"><code class="name flex">
+<span>def <span class="ident">deserialize_s</span></span>(<span>hex_string: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert the hex string representation of this solution to an IlpSolution</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize_s(cls, hex_string : str):
+    &#39;&#39;&#39;Convert the hex string representation of this solution to an IlpSolution&#39;&#39;&#39;
+    return cls.deserialize(bytes.fromhex(hex_string))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="ilpcoin.common.ilp.IlpSolution.serialize"><code class="name flex">
+<span>def <span class="ident">serialize</span></span>(<span>self) ‑> bytes</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert this ilp_solution to bytes</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize(self) -&gt; bytes:
+    &#39;&#39;&#39;Convert this ilp_solution to bytes&#39;&#39;&#39;
+    return pickle.dumps(self)</code></pre>
+</details>
+</dd>
+<dt id="ilpcoin.common.ilp.IlpSolution.serialize_s"><code class="name flex">
+<span>def <span class="ident">serialize_s</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert this IlpSolution to a hex string, when more convenient than raw bytes.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize_s(self) -&gt; str:
+    &#39;&#39;&#39;Convert this IlpSolution to a hex string, when more convenient than raw bytes.&#39;&#39;&#39;
+    return self.serialize().hex()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="ilpcoin.common" href="index.html">ilpcoin.common</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="ilpcoin.common.ilp.Ilp" href="#ilpcoin.common.ilp.Ilp">Ilp</a></code></h4>
+<ul class="two-column">
+<li><code><a title="ilpcoin.common.ilp.Ilp.check" href="#ilpcoin.common.ilp.Ilp.check">check</a></code></li>
+<li><code><a title="ilpcoin.common.ilp.Ilp.deserialize" href="#ilpcoin.common.ilp.Ilp.deserialize">deserialize</a></code></li>
+<li><code><a title="ilpcoin.common.ilp.Ilp.deserialize_s" href="#ilpcoin.common.ilp.Ilp.deserialize_s">deserialize_s</a></code></li>
+<li><code><a title="ilpcoin.common.ilp.Ilp.get_id" href="#ilpcoin.common.ilp.Ilp.get_id">get_id</a></code></li>
+<li><code><a title="ilpcoin.common.ilp.Ilp.serialize" href="#ilpcoin.common.ilp.Ilp.serialize">serialize</a></code></li>
+<li><code><a title="ilpcoin.common.ilp.Ilp.serialize_s" href="#ilpcoin.common.ilp.Ilp.serialize_s">serialize_s</a></code></li>
+<li><code><a title="ilpcoin.common.ilp.Ilp.set_id" href="#ilpcoin.common.ilp.Ilp.set_id">set_id</a></code></li>
+<li><code><a title="ilpcoin.common.ilp.Ilp.solve" href="#ilpcoin.common.ilp.Ilp.solve">solve</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="ilpcoin.common.ilp.IlpSolution" href="#ilpcoin.common.ilp.IlpSolution">IlpSolution</a></code></h4>
+<ul class="">
+<li><code><a title="ilpcoin.common.ilp.IlpSolution.deserialize" href="#ilpcoin.common.ilp.IlpSolution.deserialize">deserialize</a></code></li>
+<li><code><a title="ilpcoin.common.ilp.IlpSolution.deserialize_s" href="#ilpcoin.common.ilp.IlpSolution.deserialize_s">deserialize_s</a></code></li>
+<li><code><a title="ilpcoin.common.ilp.IlpSolution.serialize" href="#ilpcoin.common.ilp.IlpSolution.serialize">serialize</a></code></li>
+<li><code><a title="ilpcoin.common.ilp.IlpSolution.serialize_s" href="#ilpcoin.common.ilp.IlpSolution.serialize_s">serialize_s</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
