@@ -94,7 +94,7 @@ class IlpQueue:
     
     # Add a random Ilp to the queue
     def __add_random_ilp(self): 
-        self.add(random_knapsack())
+        self.add(random_knapsack(ilpcoin.common.constants.ILP_HARDNESS))
 
     # Increment the queue to the next element; called when enough verifiers have 
     # checked the solution. 
