@@ -28,3 +28,7 @@ in the root directory.
 ## Documentation
 
 See `docs/` for complete documentation and API reference. To see pretty rendered HTML, go [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/lsingh123/ilpcoin/main/docs/index.html).
+
+## Paper
+
+See the paper [here](https://github.com/lsingh123/ilpcoin/blob/main/ilpcoin_paper.pdf) for details.
