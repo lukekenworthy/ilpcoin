@@ -2,7 +2,7 @@
 
 A toy implementation of a crypto currency that solves integer linear programs for its proof-of-work.
 
-See finalreport.pdf for the full description. Sections 1 and 2 give a brief overview, and section 3 discusses a theoretical model for using such a proof-of-work scheme on a block chain.
+See [finalreport.pdf](https://github.com/lukekenworthy/ilpcoin/blob/main/finalreport.pdf) for the full description. Sections 1 and 2 give a brief overview, and section 3 discusses a theoretical model for using such a proof-of-work scheme on a block chain.
 
 To run, just do:
 
