@@ -1,6 +1,6 @@
 # ilpcoin
 
-A toy implementation of a crypto currency that solves integer linear programs for its proof-of-work. 
+A toy implementation of a crypto currency that solves integer linear programs for its proof-of-work. Final project for CS 242, Computing at Scale, at Harvard, taught by the legendary H.T. "High Tech" Kung.
 
 Luke: I worked on this project with [Jordan Barkin](https://github.com/jordanbarkin) and [Lavanya Singh](https://github.com/lsingh123). My primary contributions were building the miner, and developing the theoretical work described in section 3 of the final report.
 
