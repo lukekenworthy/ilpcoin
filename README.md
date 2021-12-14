@@ -2,7 +2,7 @@
 
 A toy implementation of a crypto currency that solves integer linear programs for its proof-of-work. 
 
-I worked on this project with [Jordan Barkin](https://github.com/jordanbarkin) and [Lavanya Singh](https://github.com/lsingh123). My primary contributions were building the miner, and developing the theoretical work described in section 3 of the final report.
+Luke: I worked on this project with [Jordan Barkin](https://github.com/jordanbarkin) and [Lavanya Singh](https://github.com/lsingh123). My primary contributions were building the miner, and developing the theoretical work described in section 3 of the final report.
 
 See [finalreport.pdf](https://github.com/lukekenworthy/ilpcoin/blob/main/finalreport.pdf) for the full description. Sections 1 and 2 give a brief overview, and section 3 discusses a theoretical model for using such a proof-of-work scheme on a block chain. The rest of the report goes into more depth about each component and draws some final conclusion at the end.
 
